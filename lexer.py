@@ -5,7 +5,7 @@ TOKEN_PATTERNS = [
     (r'\bDESDE\b', 'FROM'),
     (r'\bDONDE\b', 'WHERE'),
     (r'\bINSERTAR\b', 'INSERT'),
-    (r'\bINTO\b', 'INTO'),  # Asegúrate de incluir 'INTO' aquí
+    (r'\bEN\b', 'INTO'),  # Asegúrate de incluir 'INTO' aquí
     (r'\bVALORES\b', 'VALUES'),  # Asegúrate de incluir 'VALUES' aquí
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+', 'NUMBER'),
