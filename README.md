@@ -12,12 +12,12 @@ python main.py
 
 ## Secuencias Actuales
 
-```sql
+```sh
 SELECCIONA HR, TEMP DESDE datos DONDE HR > 100;
 ```
 
-```sql
-INSERTAR INTO datos VALORES (130, 39);
+```sh
+INSERTAR EN datos VALORES (130, 39);
 ```
 
 ## Léxico Actual
@@ -28,7 +28,7 @@ TOKEN_PATTERNS = [
     (r'\bDESDE\b', 'FROM'),
     (r'\bDONDE\b', 'WHERE'),
     (r'\bINSERTAR\b', 'INSERT'),
-    (r'\bINTO\b', 'INTO'),
+    (r'\bEN\b', 'INTO'),
     (r'\bVALORES\b', 'VALUES'),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+', 'NUMBER'),
@@ -41,3 +41,6 @@ TOKEN_PATTERNS = [
     (r'\)', 'PARDER'),
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
+```
+## Cambios
+    1. Traducir INTO a EN
