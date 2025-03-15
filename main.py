@@ -1,5 +1,6 @@
 from lexer import lexer
 from parser.select_parser import SelectParser
+from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from executor import Executor
 from database import Database
@@ -28,6 +29,11 @@ while True:
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)
             parsed_query = parser.parse()
+        elif  tokens[0][1] == "ACTUALIZAR":
+            parser = UpdateParser(tokens)  # Aquí agregamos el parser para UPDATE
+            parsed_query = parser.parse()
+            result = executor.execute_update(parsed_query["table"], parsed_query["column"], parsed_query["value"], parsed_query["where"])
+            print(result)
         else:
             raise SyntaxError("Comando no reconocido")
 

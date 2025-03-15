@@ -11,3 +11,11 @@ class Executor:
     def execute_insert(self, table_name, values):
         self.db.insert(table_name, values)
         return f"Datos insertados en la tabla '{table_name}': {values}"
+
+    def execute_update(self, table_name, column, value, where_clause):
+        #print(f"\n🔍 Ejecutando UPDATE en '{table_name}' - SET {column} = {value} DONDE {where_clause}")
+        resultado = self.db.update(table_name, column, value, where_clause)
+        #print(f"🛠 Resultado de UPDATE: {resultado}")
+        return resultado
+
+

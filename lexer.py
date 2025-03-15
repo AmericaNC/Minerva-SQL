@@ -3,12 +3,16 @@ import re
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECT'),
     (r'\bDESDE\b', 'FROM'),
-    (r'\bDONDE\b', 'WHERE'),
+    (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
-    (r'\bEN\b', 'INTO'),  # Asegúrate de incluir 'INTO' aquí
-    (r'\bVALORES\b', 'VALUES'),  # Asegúrate de incluir 'VALUES' aquí
+    (r'\bEN\b', 'INTO'),  
+    (r'\bVALORES\b', 'VALUES'),  
+    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
+    (r'\bSET\b', 'SET'),
+    (r'\bEQ\b', '='),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
-    (r'\d+', 'NUMBER'),
+    (r'\d+\.\d+', 'FLOAT'),
+    (r'\d+', 'NUMBER'),  # Asegura que los valores flotantes también se manejen
     (r'>', 'GT'),
     (r'<', 'LT'),
     (r'=', 'EQ'),
@@ -18,7 +22,6 @@ TOKEN_PATTERNS = [
     (r'\)', 'PARDER'),
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
-
 
 
 def lexer(input_text):
@@ -31,6 +34,7 @@ def lexer(input_text):
                 match = regex.group(0)
                 if token_type:
                     tokens.append((token_type, match))
+                    #print(f"Token: {token_type}, Match: {match}")  # Agregar esta línea para depuración
                 input_text = input_text[len(match):]
                 break
         if not match:
