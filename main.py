@@ -22,22 +22,27 @@ while True:
     try:
         tokens = lexer(query)
         
-        # Detectar si es un SELECT o un INSERT
+        # Detectar si es un SELECT
         if tokens[0][1] == "SELECCIONA":
             parser = SelectParser(tokens)
             parsed_query = parser.parse()
+            result = executor.execute(parsed_query)  # Ejecutar el SELECT
+            print(f"Resultado: {result}")  # Mostrar el resultado final
+
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)
             parsed_query = parser.parse()
-        elif  tokens[0][1] == "ACTUALIZAR":
-            parser = UpdateParser(tokens)  # Aquí agregamos el parser para UPDATE
+            result = executor.execute(parsed_query)
+            print(f"Resultado: {result}")
+
+        elif tokens[0][1] == "ACTUALIZAR":
+            parser = UpdateParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_update(parsed_query["table"], parsed_query["column"], parsed_query["value"], parsed_query["where"])
-            print(result)
+            print(f"Resultado: {result}")
+
         else:
             raise SyntaxError("Comando no reconocido")
 
-        result = executor.execute(parsed_query)
-        print(result)
     except Exception as e:
         print("Error:", e)

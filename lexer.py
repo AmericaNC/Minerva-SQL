@@ -1,8 +1,8 @@
 import re
 
 TOKEN_PATTERNS = [
-    (r'\bSELECCIONA\b', 'SELECT'),
-    (r'\bDESDE\b', 'FROM'),
+    (r'\bSELECCIONA\b', 'SELECCIONA'),
+    (r'\bDESDE\b', 'DESDE'),
     (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
     (r'\bEN\b', 'INTO'),  
