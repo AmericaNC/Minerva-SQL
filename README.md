@@ -19,6 +19,9 @@ SELECCIONA HR, TEMP DESDE datos DONDE HR > 100;
 ```sh
 INSERTAR EN datos VALORES (130, 39);
 ```
+```sh
+ACTUALIZAR datos SET HR = 95 DONDE TEMP = 36.5;
+```
 
 ## Léxico Actual
 
@@ -44,3 +47,6 @@ TOKEN_PATTERNS = [
 ```
 ## Cambios
     1. Traducir INTO a EN
+    2. Agregar UPDATE
+    3. Agregar SELECT (sencillo)
+    4. Agregar INSERT 
