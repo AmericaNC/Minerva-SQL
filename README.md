@@ -31,11 +31,10 @@ ELIMINAR DE datos DONDE HR EQ 90;
 DESHACER TABLA datos;
 ```
 ```sh
-<<<<<<< HEAD
 CONTAR DESDE datos;
-=======
+```
+```sh
 CREAR TABLA pacientes (ID, NOMBRE, EDAD);
->>>>>>> 1f3ace6a1b938d9b172ed8d6d6c0cde74f3f5189
 ```
 ## Léxico Actual
 
