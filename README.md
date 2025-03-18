@@ -22,19 +22,27 @@ INSERTAR EN datos VALORES (130, 39);
 ```sh
 ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
-
+```sh
+ELIMINAR DE datos DONDE HR EQ 90;
+```
 ## Léxico Actual
 
 ```python
 TOKEN_PATTERNS = [
-    (r'\bSELECCIONA\b', 'SELECT'),
-    (r'\bDESDE\b', 'FROM'),
-    (r'\bDONDE\b', 'WHERE'),
+    (r'\bSELECCIONA\b', 'SELECCIONA'),
+    (r'\bDESDE\b', 'DESDE'),
+    (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
-    (r'\bEN\b', 'INTO'),
-    (r'\bVALORES\b', 'VALUES'),
+    (r'\bEN\b', 'INTO'),  
+    (r'\bVALORES\b', 'VALUES'),  
+    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
+    (r'\bCON\b', 'SET'),
+    (r'\bELIMINAR\b', 'DELETE'),
+    (r'\bDE\b', 'FROM'),
+    (r'\bEQ\b', '='),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
-    (r'\d+', 'NUMBER'),
+    (r'\d+\.\d+', 'FLOAT'),
+    (r'\d+', 'NUMBER'),  # Asegura que los valores flotantes también se manejen
     (r'>', 'GT'),
     (r'<', 'LT'),
     (r'=', 'EQ'),
@@ -50,3 +58,4 @@ TOKEN_PATTERNS = [
     2. Agregar UPDATE
     3. Agregar SELECT (sencillo)
     4. Agregar INSERT 
+    5. Agregar DELETE (con condicion)
