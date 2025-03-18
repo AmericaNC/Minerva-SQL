@@ -9,6 +9,8 @@ TOKEN_PATTERNS = [
     (r'\bVALORES\b', 'VALUES'),  
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
     (r'\bCON\b', 'SET'),
+    (r'\bELIMINAR\b', 'DELETE'),
+    (r'\bDE\b', 'FROM'),
     (r'\bEQ\b', '='),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+\.\d+', 'FLOAT'),

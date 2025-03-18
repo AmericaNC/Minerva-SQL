@@ -20,7 +20,7 @@ SELECCIONA HR, TEMP DESDE datos DONDE HR > 100;
 INSERTAR EN datos VALORES (130, 39);
 ```
 ```sh
-ACTUALIZAR datos SET HR = 95 DONDE TEMP = 36.5;
+ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
 
 ## Léxico Actual

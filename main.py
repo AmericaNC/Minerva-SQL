@@ -2,6 +2,7 @@ from lexer import lexer
 from parser.select_parser import SelectParser
 from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
+from parser.delete_parser import DeleteParser
 from executor import Executor
 from database import Database
 
@@ -39,6 +40,12 @@ while True:
             parser = UpdateParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_update(parsed_query["table"], parsed_query["column"], parsed_query["value"], parsed_query["where"])
+            print(f"Resultado: {result}")
+        
+        elif tokens[0][1] == "ELIMINAR":
+            parser = DeleteParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_delete(parsed_query["table"], parsed_query["where"])
             print(f"Resultado: {result}")
 
         else:

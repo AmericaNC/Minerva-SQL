@@ -42,6 +42,19 @@ class Database:
             results.append({col: row[col] for col in columns})
 
         return results
+    
+    def delete(self, table_name, where_clause):
+        if table_name not in self.tables:
+            raise ValueError(f"La tabla '{table_name}' no existe.")
+
+        table = self.tables[table_name]
+        initial_count = len(table)
+
+        if where_clause:
+            column, operator, value = where_clause
+            table[:] = [row for row in table if not check_condition(row, column, operator, value)]
+
+        return initial_count - len(table)  # Número de filas eliminadas
 
     def update(self, table_name, column, value, where_clause):
         """Actualiza valores en la tabla especificada según la condición WHERE."""

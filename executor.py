@@ -17,5 +17,9 @@ class Executor:
         resultado = self.db.update(table_name, column, value, where_clause)
         #print(f"🛠 Resultado de UPDATE: {resultado}")
         return resultado
+    
+    def execute_delete(self, table_name, where_clause):
+        deleted_rows = self.db.delete(table_name, where_clause)
+        return f"Filas eliminadas: {deleted_rows}"
 
 
