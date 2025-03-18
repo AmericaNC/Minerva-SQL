@@ -19,6 +19,9 @@ SELECCIONA HR, TEMP DESDE datos;
 INSERTAR EN datos VALORES (130, 39);
 ```
 ```sh
+INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
+```
+```sh
 ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
 ```sh
@@ -26,6 +29,9 @@ ELIMINAR DE datos DONDE HR EQ 90;
 ```
 ```sh
 DESHACER TABLA datos;
+```
+```sh
+CREAR TABLA pacientes (ID, NOMBRE, EDAD);
 ```
 ## Léxico Actual
 
@@ -37,7 +43,8 @@ TOKEN_PATTERNS = [
     (r'\bINSERTAR\b', 'INSERT'),
     (r'\bEN\b', 'INTO'),  
     (r'\bVALORES\b', 'VALUES'),  
-    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
+    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
+    (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
     (r'\bTABLA\b', 'TABLE'),
     (r'\bDESHACER\b', 'DROP'),
@@ -54,6 +61,7 @@ TOKEN_PATTERNS = [
     (r';', 'SEMICOLON'),
     (r'\(', 'PARIZQ'),
     (r'\)', 'PARDER'),
+    (r'\'[^\']*\'', 'STRING'), 
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
 
@@ -63,5 +71,8 @@ TOKEN_PATTERNS = [
     2. Agregar UPDATE
     3. Agregar SELECT (sencillo)
     4. Agregar INSERT 
+    5. Sofisticar INSERT 
+    6. Agregar CREATE
+    
     5. Agregar DELETE (con condicion)
     6. Agregar DROP 
