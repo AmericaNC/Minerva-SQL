@@ -21,5 +21,11 @@ class Executor:
     def execute_delete(self, table_name, where_clause):
         deleted_rows = self.db.delete(table_name, where_clause)
         return f"Filas eliminadas: {deleted_rows}"
-
+    
+    def execute_drop(self, table_name):
+        if table_name in self.db.tables:
+            del self.db.tables[table_name]
+            return f"Tabla '{table_name}' eliminada."
+        else:
+            return f"La tabla '{table_name}' no existe."
 

@@ -3,6 +3,7 @@ from parser.select_parser import SelectParser
 from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
+from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
 
@@ -46,6 +47,12 @@ while True:
             parser = DeleteParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_delete(parsed_query["table"], parsed_query["where"])
+            print(f"Resultado: {result}")
+        
+        elif tokens[0][1] == "DESHACER":
+            parser = DropParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_drop(parsed_query["table"])
             print(f"Resultado: {result}")
 
         else:

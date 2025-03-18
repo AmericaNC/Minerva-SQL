@@ -13,7 +13,7 @@ python main.py
 ## Secuencias Actuales
 
 ```sh
-SELECCIONA HR, TEMP DESDE datos DONDE HR > 100;
+SELECCIONA HR, TEMP DESDE datos;
 ```
 
 ```sh
