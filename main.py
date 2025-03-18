@@ -4,6 +4,7 @@ from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
 from parser.create_parser import CreateTableParser
+from parser.count_parser import CountParser
 from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
@@ -60,6 +61,12 @@ while True:
             parser = CreateTableParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_create(parsed_query["table"], parsed_query["columns"])
+            print(f"Resultado: {result}")
+
+        elif tokens[0][1] == "CONTAR":
+            parser = CountParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_count(parsed_query["table"], parsed_query["where"])
             print(f"Resultado: {result}")
 
         else:

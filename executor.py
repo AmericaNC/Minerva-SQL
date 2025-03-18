@@ -17,6 +17,9 @@ class Executor:
         #print(f"🛠 Resultado de UPDATE: {resultado}")
         return resultado
     
+    def execute_count(self, table_name, where_clause):
+        return self.db.count(table_name, where_clause)
+    
     def execute_delete(self, table_name, where_clause):
         deleted_rows = self.db.delete(table_name, where_clause)
         return f"Filas eliminadas: {deleted_rows}"

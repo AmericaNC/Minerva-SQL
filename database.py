@@ -68,6 +68,24 @@ class Database:
         # Crear una tabla vacía con las columnas especificadas
         self.tables[table_name] = [{col: None for col in columns}]
         return f"Tabla '{table_name}' creada con columnas {columns}."
+    def count(self, table_name, where_clause=None):
+        if table_name not in self.tables:
+            raise ValueError(f"La tabla '{table_name}' no existe.")
+        table = self.tables[table_name]
+        count = 0
+        for row in table:
+            if where_clause:
+                column, operator, value = where_clause
+                if operator == "EQ" and row[column] == value:
+                    count += 1
+                elif operator == "GT" and row[column] > value:
+                    count += 1
+                elif operator == "LT" and row[column] < value:
+                    count += 1
+            else:
+                count += 1
+        return count
+
 
     def update(self, table_name, column, value, where_clause):
         """Actualiza valores en la tabla especificada según la condición WHERE."""

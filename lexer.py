@@ -14,6 +14,7 @@ TOKEN_PATTERNS = [
     (r'\bDESHACER\b', 'DROP'),
     (r'\bELIMINAR\b', 'DELETE'),
     (r'\bDE\b', 'FROM'),
+    (r'\bCONTAR\b', 'COUNT'),
     (r'\bEQ\b', '='),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+\.\d+', 'FLOAT'),

@@ -27,6 +27,9 @@ ELIMINAR DE datos DONDE HR EQ 90;
 ```sh
 DESHACER TABLA datos;
 ```
+```sh
+CONTAR DESDE datos;
+```
 ## Léxico Actual
 
 ```python
@@ -37,12 +40,14 @@ TOKEN_PATTERNS = [
     (r'\bINSERTAR\b', 'INSERT'),
     (r'\bEN\b', 'INTO'),  
     (r'\bVALORES\b', 'VALUES'),  
-    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
+    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
+    (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
     (r'\bTABLA\b', 'TABLE'),
     (r'\bDESHACER\b', 'DROP'),
     (r'\bELIMINAR\b', 'DELETE'),
     (r'\bDE\b', 'FROM'),
+    (r'\bCONTAR\b', 'COUNT'),
     (r'\bEQ\b', '='),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+\.\d+', 'FLOAT'),
@@ -54,6 +59,7 @@ TOKEN_PATTERNS = [
     (r';', 'SEMICOLON'),
     (r'\(', 'PARIZQ'),
     (r'\)', 'PARDER'),
+    (r'\'[^\']*\'', 'STRING'), 
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
 
@@ -65,3 +71,5 @@ TOKEN_PATTERNS = [
     4. Agregar INSERT 
     5. Agregar DELETE (con condicion)
     6. Agregar DROP 
+    7. Agregar CREATE
+    8. Agregar COUNT simple
