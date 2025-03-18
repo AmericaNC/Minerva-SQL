@@ -19,6 +19,9 @@ SELECCIONA HR, TEMP DESDE datos;
 INSERTAR EN datos VALORES (130, 39);
 ```
 ```sh
+INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
+```
+```sh
 ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
 ```sh
@@ -28,7 +31,11 @@ ELIMINAR DE datos DONDE HR EQ 90;
 DESHACER TABLA datos;
 ```
 ```sh
+<<<<<<< HEAD
 CONTAR DESDE datos;
+=======
+CREAR TABLA pacientes (ID, NOMBRE, EDAD);
+>>>>>>> 1f3ace6a1b938d9b172ed8d6d6c0cde74f3f5189
 ```
 ## Léxico Actual
 
@@ -69,6 +76,9 @@ TOKEN_PATTERNS = [
     2. Agregar UPDATE
     3. Agregar SELECT (sencillo)
     4. Agregar INSERT 
+    5. Sofisticar INSERT 
+    6. Agregar CREATE
+    
     5. Agregar DELETE (con condicion)
     6. Agregar DROP 
     7. Agregar CREATE
