@@ -15,7 +15,6 @@ python main.py
 ```sh
 SELECCIONA HR, TEMP DESDE datos;
 ```
-
 ```sh
 INSERTAR EN datos VALORES (130, 39);
 ```
@@ -24,6 +23,9 @@ ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
 ```sh
 ELIMINAR DE datos DONDE HR EQ 90;
+```
+```sh
+DESHACER TABLA datos;
 ```
 ## Léxico Actual
 
@@ -37,6 +39,8 @@ TOKEN_PATTERNS = [
     (r'\bVALORES\b', 'VALUES'),  
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
     (r'\bCON\b', 'SET'),
+    (r'\bTABLA\b', 'TABLE'),
+    (r'\bDESHACER\b', 'DROP'),
     (r'\bELIMINAR\b', 'DELETE'),
     (r'\bDE\b', 'FROM'),
     (r'\bEQ\b', '='),
@@ -52,6 +56,7 @@ TOKEN_PATTERNS = [
     (r'\)', 'PARDER'),
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
+
 ```
 ## Cambios
     1. Traducir INTO a EN
@@ -59,3 +64,4 @@ TOKEN_PATTERNS = [
     3. Agregar SELECT (sencillo)
     4. Agregar INSERT 
     5. Agregar DELETE (con condicion)
+    6. Agregar DROP 
