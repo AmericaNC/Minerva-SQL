@@ -3,6 +3,7 @@ from parser.select_parser import SelectParser
 from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
+from parser.create_parser import CreateTableParser
 from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
@@ -34,7 +35,7 @@ while True:
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)
             parsed_query = parser.parse()
-            result = executor.execute(parsed_query)
+            result = executor.execute_insert(parsed_query["table"], parsed_query["values"], parsed_query["columns"])
             print(f"Resultado: {result}")
 
         elif tokens[0][1] == "ACTUALIZAR":
@@ -53,6 +54,12 @@ while True:
             parser = DropParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_drop(parsed_query["table"])
+            print(f"Resultado: {result}")
+        
+        elif tokens[0][1] == "CREAR":
+            parser = CreateTableParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_create(parsed_query["table"], parsed_query["columns"])
             print(f"Resultado: {result}")
 
         else:

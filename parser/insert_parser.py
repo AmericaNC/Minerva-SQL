@@ -15,15 +15,42 @@ class InsertParser:
         self.consume("INSERT")
         self.consume("INTO")
         table_name = self.consume("IDENTIFIER")
+
+        # Opcional: columnas
+        columns = []
+        if self.tokens[self.position][0] == "PARIZQ":
+            self.consume("PARIZQ")
+            while self.tokens[self.position][0] == "IDENTIFIER":
+                columns.append(self.consume("IDENTIFIER"))
+                if self.tokens[self.position][0] == "COMMA":
+                    self.consume("COMMA")
+                else:
+                    break
+            self.consume("PARDER")
+
         self.consume("VALUES")
         self.consume("PARIZQ")
         values = []
         while True:
-            values.append(self.consume("NUMBER"))
+            token_type, token_value = self.tokens[self.position]
+
+            if token_type == "NUMBER":
+                values.append(int(token_value))  # Es un entero
+                self.position += 1
+            elif token_type == "FLOAT":
+                values.append(float(token_value))  # Es un flotante
+                self.position += 1
+            elif token_type == "STRING":
+                values.append(token_value[1:-1])  # Eliminar las comillas simples
+                self.position += 1
+            else:
+                raise SyntaxError(f"Se esperaba NUMBER o STRING, pero se encontró {token_type}")
+            
             if self.tokens[self.position][0] == "COMMA":
                 self.consume("COMMA")
             else:
                 break
         self.consume("PARDER")
         self.consume("SEMICOLON")
-        return {"type": "INSERT", "table": table_name, "values": values}
+        
+        return {"type": "INSERT", "table": table_name, "columns": columns, "values": values}

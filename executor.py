@@ -8,9 +8,8 @@ class Executor:
         elif parsed_query["type"] == "INSERT":
             return self.execute_insert(parsed_query["table"], parsed_query["values"])
 
-    def execute_insert(self, table_name, values):
-        self.db.insert(table_name, values)
-        return f"Datos insertados en la tabla '{table_name}': {values}"
+    def execute_insert(self, table_name, values, columns):
+        return self.db.insert(table_name, values, columns)
 
     def execute_update(self, table_name, column, value, where_clause):
         #print(f"\n🔍 Ejecutando UPDATE en '{table_name}' - SET {column} = {value} DONDE {where_clause}")
@@ -21,6 +20,9 @@ class Executor:
     def execute_delete(self, table_name, where_clause):
         deleted_rows = self.db.delete(table_name, where_clause)
         return f"Filas eliminadas: {deleted_rows}"
+    
+    def execute_create(self, table_name, columns):
+        return self.db.create_table(table_name, columns)
     
     def execute_drop(self, table_name):
         if table_name in self.db.tables:

@@ -2,23 +2,28 @@ class Database:
     def __init__(self):
         self.tables = {}  # Diccionario para almacenar las tablas
 
-    def insert(self, table_name, values):
-        """Inserta valores en la tabla especificada."""
-        # Si la tabla no existe, la creamos.
+    def insert(self, table_name, values, columns=None):
         if table_name not in self.tables:
-            self.tables[table_name] = []
+            raise ValueError(f"La tabla '{table_name}' no existe.")
 
-        # Convertir los valores a enteros o flotantes si es necesario
-        converted_values = [
-            int(val) if val.isdigit() else float(val) if "." in val else val
-            for val in values
-        ]
+        # Obtener las columnas de la tabla
+        table_columns = list(self.tables[table_name][0].keys())
 
-        # Agregar los valores convertidos a la tabla
-        self.tables[table_name].append(
-            dict(zip(self.tables[table_name][0].keys(), converted_values))
-        )
-        # Se usa 'dict(zip(...))' para crear un diccionario con las claves de la tabla.
+        if columns:
+            if set(columns) - set(table_columns):
+                raise ValueError(f"Columnas inválidas: {set(columns) - set(table_columns)}")
+
+        else:
+            columns = table_columns  # Si no se especifican columnas, usamos todas en orden
+
+        if len(columns) != len(values):
+            raise ValueError("El número de valores no coincide con el número de columnas.")
+
+        # Crear el nuevo registro con valores alineados a las columnas
+        new_row = {col: val for col, val in zip(columns, values)}
+        self.tables[table_name].append(new_row)
+
+        return f"Datos insertados en '{table_name}': {new_row}"
 
     def select(self, table_name, columns, where_clause=None):
         """Consulta datos de la tabla especificada."""
@@ -55,6 +60,14 @@ class Database:
             table[:] = [row for row in table if not check_condition(row, column, operator, value)]
 
         return initial_count - len(table)  # Número de filas eliminadas
+    
+    def create_table(self, table_name, columns):
+        if table_name in self.tables:
+            raise ValueError(f"La tabla '{table_name}' ya existe.")
+        
+        # Crear una tabla vacía con las columnas especificadas
+        self.tables[table_name] = [{col: None for col in columns}]
+        return f"Tabla '{table_name}' creada con columnas {columns}."
 
     def update(self, table_name, column, value, where_clause):
         """Actualiza valores en la tabla especificada según la condición WHERE."""

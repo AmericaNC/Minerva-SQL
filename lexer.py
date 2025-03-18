@@ -7,9 +7,10 @@ TOKEN_PATTERNS = [
     (r'\bINSERTAR\b', 'INSERT'),
     (r'\bEN\b', 'INTO'),  
     (r'\bVALORES\b', 'VALUES'),  
-    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  # Cambiarlo a ACTUALIZAR en lugar de UPDATE 
+    (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
+    (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
-        (r'\bTABLA\b', 'TABLE'),
+    (r'\bTABLA\b', 'TABLE'),
     (r'\bDESHACER\b', 'DROP'),
     (r'\bELIMINAR\b', 'DELETE'),
     (r'\bDE\b', 'FROM'),
@@ -24,6 +25,7 @@ TOKEN_PATTERNS = [
     (r';', 'SEMICOLON'),
     (r'\(', 'PARIZQ'),
     (r'\)', 'PARDER'),
+    (r'\'[^\']*\'', 'STRING'), 
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
 
