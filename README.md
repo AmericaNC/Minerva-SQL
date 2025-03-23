@@ -82,3 +82,5 @@ TOKEN_PATTERNS = [
     6. Agregar DROP 
     7. Agregar CREATE
     8. Agregar COUNT simple
+
+    Mucho texto
