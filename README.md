@@ -57,10 +57,12 @@ ELIMINAR USUARIO fernando
 ```sh
  MOSTRAR TABLAS
 ```
+```sh
+ MOSTRAR TABLAS EN pacientes
+```
 ## Léxico Actual
 
 ```python
-TOKEN_PATTERNS = [
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECCIONA'),
     (r'\bELIMINAR\b', 'ELIMINAR'),
@@ -80,6 +82,7 @@ TOKEN_PATTERNS = [
     (r'\bCREAR\b', 'CREATE'),
     (r'\bLOGIN\b', 'LOGIN'),
     (r'\bUSUARIO\b', 'USUARIO'),
+    (r'\bEN\b', 'IN'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
@@ -124,4 +127,5 @@ TOKEN_PATTERNS = [
     13. Eliminar usuario
     14. Mostrar bases
     15. Mostar tablas generalmente
+    16. Mostrar tablas especificas
 

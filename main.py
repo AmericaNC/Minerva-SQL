@@ -100,6 +100,15 @@ while True:
            else:
             print("No hay tablas en la base de datos actual.")
 
+        elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "TABLAS" and tokens[2][1] == "EN":
+           from parser.show_tables_in_parser import ShowTablesInParser
+           parser = ShowTablesInParser(tokens)
+           parsed_query = parser.parse()
+           result = executor.execute_show_tables_in(parsed_query["database"])
+           if result:
+            print(f"Tablas en '{parsed_query['database']}':", ", ".join(result))
+           else:
+            print(f"No hay tablas en '{parsed_query['database']}'")
 
         elif tokens[0][1] == "ACTUALIZAR":
             parser = UpdateParser(tokens)

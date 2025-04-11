@@ -26,13 +26,21 @@ class Executor:
     def execute_show_tables(self):
         current_db = self.db.current_db
         return list(self.db.databases[current_db].keys())
-
+    
+    def execute_show_tables_in(self, db_name):
+        if db_name not in self.db.databases:
+          raise ValueError(f"La base de datos '{db_name}' no existe.")
+        return list(self.db.databases[db_name].keys())
 
     def execute_insert(self, table_name, values, columns):
         return self.db.insert(table_name, values, columns)
     
     def execute_use(self, db_name):
-        return self.db.use_database(db_name)
+       if db_name not in self.db.databases:
+        raise ValueError(f"La base de datos '{db_name}' no existe.")
+       self.db.current_db = db_name
+       return f"Usando base de datos: {db_name}"
+
     
     def execute_create_database(self, name):
         if name in self.db.databases:
@@ -54,8 +62,12 @@ class Executor:
         return f"Filas eliminadas: {deleted_rows}"
     
     def execute_create(self, table_name, columns):
-        return self.db.create_table(table_name, columns)
-    
+        db = self.db.databases[self.db.current_db]
+        if table_name in db:
+          raise ValueError(f"La tabla '{table_name}' ya existe.")
+        db[table_name] = {"columns": columns, "rows": []}
+        return f"Tabla '{table_name}' creada con columnas {columns}."
+
     def execute_drop(self, table_name):
         if table_name in self.db.tables:
             del self.db.tables[table_name]
