@@ -109,6 +109,14 @@ while True:
             print(f"Tablas en '{parsed_query['database']}':", ", ".join(result))
            else:
             print(f"No hay tablas en '{parsed_query['database']}'")
+        
+        elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "USUARIOS":
+            from parser.show_users_parser import ShowUsersParser
+            parser = ShowUsersParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_show_users()
+            print(result)
+
 
         elif tokens[0][1] == "ACTUALIZAR":
             parser = UpdateParser(tokens)

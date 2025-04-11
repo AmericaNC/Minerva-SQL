@@ -41,7 +41,11 @@ class Executor:
        self.db.current_db = db_name
        return f"Usando base de datos: {db_name}"
 
-    
+    def execute_show_users(self):
+       if not self.db.users:
+        return "No hay usuarios registrados."
+       return "Usuarios: " + ", ".join(self.db.users.keys())
+
     def execute_create_database(self, name):
         if name in self.db.databases:
             return f"La base de datos '{name}' ya existe."

@@ -60,6 +60,9 @@ ELIMINAR USUARIO fernando
 ```sh
  MOSTRAR TABLAS EN pacientes
 ```
+```sh
+ MOSTRAR USUARIOS
+```
 ## Léxico Actual
 
 ```python
@@ -76,12 +79,14 @@ TOKEN_PATTERNS = [
     (r'\bCREAR\b', 'CREATE'),
     (r'\bBASES\b', 'DATABASES'),
     (r'\bMOSTRAR\b', 'SHOW'),
+    (r'\bMOSTRAR\b', 'MOSTRAR'),
     (r'\bTABLAS\b', 'TABLES'),
     (r'\bUSUARIO\b', 'USER'),
     (r'\bCON\b', 'WITH'),
     (r'\bCREAR\b', 'CREATE'),
     (r'\bLOGIN\b', 'LOGIN'),
     (r'\bUSUARIO\b', 'USUARIO'),
+    (r'\bUSUARIOS\b', 'USUARIOS'),
     (r'\bEN\b', 'IN'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
@@ -128,4 +133,5 @@ TOKEN_PATTERNS = [
     14. Mostrar bases
     15. Mostar tablas generalmente
     16. Mostrar tablas especificas
+    17. Mostrar usuarios
 
