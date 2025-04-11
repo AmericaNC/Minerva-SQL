@@ -13,6 +13,12 @@ class Executor:
 
     def execute_login(self, username, password):
         return self.db.login(username, password)
+    
+    def execute_eliminar_usuario(self, username):
+        if username not in self.db.users:
+            return f"El usuario '{username}' no existe."
+        del self.db.users[username]
+        return f"Usuario '{username}' eliminado."
 
     def execute_insert(self, table_name, values, columns):
         return self.db.insert(table_name, values, columns)

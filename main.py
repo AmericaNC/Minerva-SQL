@@ -1,5 +1,6 @@
 from lexer import lexer
 from parser.select_parser import SelectParser
+from parser.eliminar_usuario_parser import EliminarUsuarioParser
 from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
@@ -29,7 +30,7 @@ while True:
         break
     try:
         tokens = lexer(query)
-        
+        #print("Tokens:", tokens)        
         # Detectar si es un SELECT
         if tokens[0][1] == "SELECCIONA":
             parser = SelectParser(tokens)
@@ -61,6 +62,20 @@ while True:
             result = executor.execute_create_user(parsed_query["username"], parsed_query["password"])
             print(result)
 
+        elif tokens[0][0] == "ELIMINAR" and tokens[1][0] == "USUARIO":
+            parser = EliminarUsuarioParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_eliminar_usuario(parsed_query["nombre"])
+            print(result)
+
+
+        elif tokens[0][0] == "DROP" and tokens[1][0] == "USER":
+            parser = DropUserParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_drop_user(parsed_query["username"])
+            print(result)
+
+
         elif tokens[0][0] == "LOGIN":
             parser = LoginParser(tokens)
             parsed_query = parser.parse()
@@ -75,10 +90,18 @@ while True:
             print(f"Resultado: {result}")
         
         elif tokens[0][1] == "ELIMINAR":
-            parser = DeleteParser(tokens)
-            parsed_query = parser.parse()
-            result = executor.execute_delete(parsed_query["table"], parsed_query["where"])
+            if len(tokens) > 1 and tokens[1][0] == "USER":  # <--- esto es clave
+                from parser.eliminar_usuario_parser import EliminarUsuarioParser
+                parser = EliminarUsuarioParser(tokens)
+                parsed_query = parser.parse()
+                result = executor.execute_eliminar_usuario(parsed_query["nombre"])
+                print(result)
+            else:
+                parser = DeleteParser(tokens)
+                parsed_query = parser.parse()
+                result = executor.execute_delete(parsed_query["table"], parsed_query["where"])
             print(f"Resultado: {result}")
+
         
         elif tokens[0][1] == "DESHACER":
             parser = DropParser(tokens)

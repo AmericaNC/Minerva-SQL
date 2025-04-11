@@ -2,6 +2,7 @@ import re
 
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECCIONA'),
+    (r'\bELIMINAR\b', 'ELIMINAR'),
     (r'\bDESDE\b', 'DESDE'),
     (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
@@ -14,6 +15,7 @@ TOKEN_PATTERNS = [
     (r'\bCON\b', 'WITH'),
     (r'\bCREAR\b', 'CREATE'),
     (r'\bLOGIN\b', 'LOGIN'),
+    (r'\bUSUARIO\b', 'USUARIO'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),

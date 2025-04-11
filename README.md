@@ -48,11 +48,15 @@ CREAR USUARIO fernando CON 1234
 ```sh
 LOGIN fernando CON 1234
 ```
+```sh
+ELIMINAR USUARIO fernando
+```
 ## Léxico Actual
 
 ```python
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECCIONA'),
+    (r'\bELIMINAR\b', 'ELIMINAR'),
     (r'\bDESDE\b', 'DESDE'),
     (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
@@ -61,6 +65,11 @@ TOKEN_PATTERNS = [
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),
     (r'\bCREAR\b', 'CREATE'),
+    (r'\bUSUARIO\b', 'USER'),
+    (r'\bCON\b', 'WITH'),
+    (r'\bCREAR\b', 'CREATE'),
+    (r'\bLOGIN\b', 'LOGIN'),
+    (r'\bUSUARIO\b', 'USUARIO'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
@@ -99,5 +108,8 @@ TOKEN_PATTERNS = [
     8. Agregar COUNT simple
     9. Agregar USE database
     10. Agregar CREATE DATABASE
+    11. Crear usuarios
+    12. Iniciar sesion como usuarios
+    13. Elimianr usuario
 
     Mucho texto

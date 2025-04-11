@@ -27,6 +27,14 @@ class Database:
         self.current_user = username
         return f"Sesión iniciada como '{username}'."
 
+    def eliminar_usuario(self, nombre):
+        if nombre not in self.users:
+            return f"El usuario '{nombre}' no existe."
+        if self.current_user == nombre:
+            self.current_user = None
+        del self.users[nombre]
+        return f"Usuario '{nombre}' eliminado correctamente."
+
 
     def insert(self, table_name, values, columns=None):
         if table_name not in self.tables:
