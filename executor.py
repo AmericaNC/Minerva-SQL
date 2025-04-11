@@ -22,6 +22,11 @@ class Executor:
     
     def execute_show_databases(self):
         return list(self.db.databases.keys())
+    
+    def execute_show_tables(self):
+        current_db = self.db.current_db
+        return list(self.db.databases[current_db].keys())
+
 
     def execute_insert(self, table_name, values, columns):
         return self.db.insert(table_name, values, columns)

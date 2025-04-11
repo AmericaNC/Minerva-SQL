@@ -54,9 +54,13 @@ ELIMINAR USUARIO fernando
 ```sh
  MOSTRAR BASES
 ```
+```sh
+ MOSTRAR TABLAS
+```
 ## Léxico Actual
 
 ```python
+TOKEN_PATTERNS = [
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECCIONA'),
     (r'\bELIMINAR\b', 'ELIMINAR'),
@@ -70,6 +74,7 @@ TOKEN_PATTERNS = [
     (r'\bCREAR\b', 'CREATE'),
     (r'\bBASES\b', 'DATABASES'),
     (r'\bMOSTRAR\b', 'SHOW'),
+    (r'\bTABLAS\b', 'TABLES'),
     (r'\bUSUARIO\b', 'USER'),
     (r'\bCON\b', 'WITH'),
     (r'\bCREAR\b', 'CREATE'),
@@ -117,5 +122,6 @@ TOKEN_PATTERNS = [
     11. Crear usuarios
     12. Iniciar sesion como usuarios
     13. Eliminar usuario
-    14. ostrar bases
+    14. Mostrar bases
+    15. Mostar tablas generalmente
 

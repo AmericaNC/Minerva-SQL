@@ -90,6 +90,16 @@ while True:
             result = executor.execute_show_databases()
             print("Bases de datos disponibles:", ", ".join(result))
 
+        elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "TABLAS":
+           from parser.show_tables_parser import ShowTablesParser
+           parser = ShowTablesParser(tokens)
+           parsed_query = parser.parse()
+           result = executor.execute_show_tables()
+           if result:
+            print("Tablas disponibles:", ", ".join(result))
+           else:
+            print("No hay tablas en la base de datos actual.")
+
 
         elif tokens[0][1] == "ACTUALIZAR":
             parser = UpdateParser(tokens)

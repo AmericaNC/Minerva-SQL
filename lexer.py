@@ -11,10 +11,9 @@ TOKEN_PATTERNS = [
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),
     (r'\bCREAR\b', 'CREATE'),
-
     (r'\bBASES\b', 'DATABASES'),
     (r'\bMOSTRAR\b', 'SHOW'),
-
+    (r'\bTABLAS\b', 'TABLES'),
     (r'\bUSUARIO\b', 'USER'),
     (r'\bCON\b', 'WITH'),
     (r'\bCREAR\b', 'CREATE'),
