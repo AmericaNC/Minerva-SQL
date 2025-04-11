@@ -10,6 +10,9 @@ class Executor:
 
     def execute_insert(self, table_name, values, columns):
         return self.db.insert(table_name, values, columns)
+    
+    def execute_use(self, db_name):
+        return self.db.use_database(db_name)
 
     def execute_update(self, table_name, column, value, where_clause):
         #print(f"\n🔍 Ejecutando UPDATE en '{table_name}' - SET {column} = {value} DONDE {where_clause}")

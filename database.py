@@ -1,6 +1,17 @@
 class Database:
     def __init__(self):
-        self.tables = {}  # Diccionario para almacenar las tablas
+        self.databases = {"default": {}}  # múltiples bases
+        self.current_db = "default"
+        
+    @property
+    def tables(self):
+        return self.databases[self.current_db]
+    
+    def use_database(self, name):
+        if name not in self.databases:
+            self.databases[name] = {}
+        self.current_db = name
+        return f"Usando base de datos: {name}"
 
     def insert(self, table_name, values, columns=None):
         if table_name not in self.tables:
