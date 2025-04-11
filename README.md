@@ -88,3 +88,5 @@ TOKEN_PATTERNS = [
     7. Agregar CREATE
     8. Agregar COUNT simple
     9. Agregar USE database
+
+    Mucho texto
