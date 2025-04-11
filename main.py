@@ -2,6 +2,7 @@ from lexer import lexer
 from parser.select_parser import SelectParser
 from parser.eliminar_usuario_parser import EliminarUsuarioParser
 from parser.show_parser import ShowDatabasesParser
+from parser.grant_parser import GrantParser
 from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
@@ -38,6 +39,12 @@ while True:
             parsed_query = parser.parse()
             result = executor.execute(parsed_query)  # Ejecutar el SELECT
             print(f"Resultado: {result}")  # Mostrar el resultado final
+        
+        elif tokens[0][1] == "OTORGAR":
+            parser = GrantParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_grant(parsed_query["permiso"], parsed_query["usuario"])
+            print(result)
 
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)

@@ -1,10 +1,18 @@
 class Database:
     def __init__(self):
-        self.databases = {"default": {}}  # múltiples bases
+        self.databases = {"default": {}}
         self.current_db = "default"
-        self.users = {}  # {'usuario': 'contrasena'}
-        self.current_user = None
 
+        # Usuarios
+        self.users = {"root": "rootpass"}
+        self.current_user = "root"  # ← login automático
+
+        # Permisos
+        self.permissions = {
+            "root": {"crear_tabla", "ver_usuario", "insertar", "usar_base", "crear_base", 
+                     "eliminar_usuario", "otorgar", "ver_bases", "ver_tablas", 
+                     "actualizar", "contar", "eliminar", "eliminar_tablas"}
+        }
     @property
     def tables(self):
         return self.databases[self.current_db]

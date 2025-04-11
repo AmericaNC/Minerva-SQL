@@ -11,8 +11,8 @@ class ShowTablesInParser:
         if self.tokens[self.pos][1] != "TABLAS":
             raise SyntaxError("Se esperaba 'TABLAS'")
         self.pos += 1
-        if self.tokens[self.pos][1] != "EN":
-            raise SyntaxError("Se esperaba 'EN'")
+        if self.tokens[self.pos][1] != "DE":
+            raise SyntaxError("Se esperaba 'DE'")
         self.pos += 1
         if self.tokens[self.pos][0] != "IDENTIFIER":
             raise SyntaxError("Se esperaba el nombre de la base de datos")

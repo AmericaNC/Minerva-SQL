@@ -43,32 +43,48 @@ USAR BASE datos;
 CREAR BASE laboratorio;
 ```
 ```sh
-CREAR USUARIO fernando CON 1234
+CREAR USUARIO fernando PARA 1234
 ```
 ```sh
-LOGIN fernando CON 1234
+LOGIN fernando PARA 1234
 ```
 ```sh
 ELIMINAR USUARIO fernando
 ```
 ```sh
- MOSTRAR BASES
+MOSTRAR BASES
 ```
 ```sh
- MOSTRAR TABLAS
+MOSTRAR TABLAS
 ```
 ```sh
- MOSTRAR TABLAS EN pacientes
+MOSTRAR USUARIOS
 ```
 ```sh
- MOSTRAR USUARIOS
+OTORGAR crear_tabla A fernando;
 ```
+## Permisos disponibles
+| Permiso           | Descripción                          |
+|-------------------|--------------------------------------|
+| eliminar_usuario  | Eliminar un usuario del sistema      |
+| ver_bases         | Listar todas las bases de datos      |
+| otorgar           | Asignar permisos a usuarios          |
+| ver_tablas        | Mostrar tablas de una base           |
+| insertar          | Añadir nuevos registros              |
+| usar_base         | Seleccionar una base para trabajar   |
+| ver_usuarios      | Listar usuarios existentes           |
+| crear_base        | Crear nuevas bases de datos          |
+| actualizar        | Modificar registros existentes       |
+| contar            | Obtener cantidad de registros        |
+| eliminar          | Borrar registros                     |
+| crear_tabla       | Crear nuevas tablas                  |
+| eliminar_tabla    | Eliminar tablas existentes           |
 ## Léxico Actual
 
 ```python
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECCIONA'),
-    (r'\bELIMINAR\b', 'ELIMINAR'),
+    #(r'\bELIMINAR\b', 'ELIMINAR'),
     (r'\bDESDE\b', 'DESDE'),
     (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
@@ -79,15 +95,17 @@ TOKEN_PATTERNS = [
     (r'\bCREAR\b', 'CREATE'),
     (r'\bBASES\b', 'DATABASES'),
     (r'\bMOSTRAR\b', 'SHOW'),
+    (r'\bOTORGAR\b', 'GRANT'),
+    (r'\bA\b', 'TO'),
     (r'\bMOSTRAR\b', 'MOSTRAR'),
     (r'\bTABLAS\b', 'TABLES'),
     (r'\bUSUARIO\b', 'USER'),
-    (r'\bCON\b', 'WITH'),
+    (r'\bPARA\b', 'WITH'),
     (r'\bCREAR\b', 'CREATE'),
     (r'\bLOGIN\b', 'LOGIN'),
     (r'\bUSUARIO\b', 'USUARIO'),
     (r'\bUSUARIOS\b', 'USUARIOS'),
-    (r'\bEN\b', 'IN'),
+    #(r'\bDENTRO\b', 'IN'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
@@ -132,6 +150,5 @@ TOKEN_PATTERNS = [
     13. Eliminar usuario
     14. Mostrar bases
     15. Mostar tablas generalmente
-    16. Mostrar tablas especificas
-    17. Mostrar usuarios
-
+    16. Mostrar usuarios
+    17. Otorgar permisos a usuarios
