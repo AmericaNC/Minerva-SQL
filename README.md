@@ -51,6 +51,9 @@ LOGIN fernando CON 1234
 ```sh
 ELIMINAR USUARIO fernando
 ```
+```sh
+ MOSTRAR BASES
+```
 ## Léxico Actual
 
 ```python
@@ -65,6 +68,8 @@ TOKEN_PATTERNS = [
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),
     (r'\bCREAR\b', 'CREATE'),
+    (r'\bBASES\b', 'DATABASES'),
+    (r'\bMOSTRAR\b', 'SHOW'),
     (r'\bUSUARIO\b', 'USER'),
     (r'\bCON\b', 'WITH'),
     (r'\bCREAR\b', 'CREATE'),
@@ -93,6 +98,7 @@ TOKEN_PATTERNS = [
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
 
+
 ```
 ## Cambios
     1. Traducir INTO a EN
@@ -110,6 +116,6 @@ TOKEN_PATTERNS = [
     10. Agregar CREATE DATABASE
     11. Crear usuarios
     12. Iniciar sesion como usuarios
-    13. Elimianr usuario
+    13. Eliminar usuario
+    14. ostrar bases
 
-    Mucho texto

@@ -19,6 +19,9 @@ class Executor:
             return f"El usuario '{username}' no existe."
         del self.db.users[username]
         return f"Usuario '{username}' eliminado."
+    
+    def execute_show_databases(self):
+        return list(self.db.databases.keys())
 
     def execute_insert(self, table_name, values, columns):
         return self.db.insert(table_name, values, columns)

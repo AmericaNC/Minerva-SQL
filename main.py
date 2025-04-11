@@ -1,6 +1,7 @@
 from lexer import lexer
 from parser.select_parser import SelectParser
 from parser.eliminar_usuario_parser import EliminarUsuarioParser
+from parser.show_parser import ShowDatabasesParser
 from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
@@ -81,6 +82,13 @@ while True:
             parsed_query = parser.parse()
             result = executor.execute_login(parsed_query["username"], parsed_query["password"])
             print(result)
+
+        elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "BASES":
+            from parser.show_parser import ShowDatabasesParser
+            parser = ShowDatabasesParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_show_databases()
+            print("Bases de datos disponibles:", ", ".join(result))
 
 
         elif tokens[0][1] == "ACTUALIZAR":
