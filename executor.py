@@ -8,6 +8,12 @@ class Executor:
         elif parsed_query["type"] == "INSERT":
             return self.execute_insert(parsed_query["table"], parsed_query["values"])
 
+    def execute_create_user(self, username, password):
+        return self.db.create_user(username, password)
+
+    def execute_login(self, username, password):
+        return self.db.login(username, password)
+
     def execute_insert(self, table_name, values, columns):
         return self.db.insert(table_name, values, columns)
     

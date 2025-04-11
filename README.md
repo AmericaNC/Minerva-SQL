@@ -42,6 +42,12 @@ USAR BASE datos;
 ```sh
 CREAR BASE laboratorio;
 ```
+```sh
+CREAR USUARIO fernando CON 1234
+```
+```sh
+LOGIN fernando CON 1234
+```
 ## Léxico Actual
 
 ```python

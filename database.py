@@ -2,7 +2,9 @@ class Database:
     def __init__(self):
         self.databases = {"default": {}}  # múltiples bases
         self.current_db = "default"
-        
+        self.users = {}  # {'usuario': 'contrasena'}
+        self.current_user = None
+
     @property
     def tables(self):
         return self.databases[self.current_db]
@@ -12,6 +14,19 @@ class Database:
             self.databases[name] = {}
         self.current_db = name
         return f"Usando base de datos: {name}"
+    
+    def create_user(self, username, password):
+        if username in self.users:
+            return f"El usuario '{username}' ya existe."
+        self.users[username] = password
+        return f"Usuario '{username}' creado."
+
+    def login(self, username, password):
+        if username not in self.users or self.users[username] != password:
+            return "Usuario o contraseña incorrectos."
+        self.current_user = username
+        return f"Sesión iniciada como '{username}'."
+
 
     def insert(self, table_name, values, columns=None):
         if table_name not in self.tables:

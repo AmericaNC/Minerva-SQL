@@ -4,6 +4,8 @@ from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
 from parser.create_parser import CreateTableParser
+from parser.create_user_parser import CreateUserParser
+from parser.login_parser import LoginParser
 from parser.create_database_parser import CreateDatabaseParser
 from parser.count_parser import CountParser
 from parser.use_parser import UseDatabaseParser 
@@ -51,6 +53,18 @@ while True:
             parser = CreateDatabaseParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_create_database(parsed_query["database"])
+            print(result)
+
+        elif tokens[0][0] == "CREATE" and tokens[1][0] == "USER":
+            parser = CreateUserParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_create_user(parsed_query["username"], parsed_query["password"])
+            print(result)
+
+        elif tokens[0][0] == "LOGIN":
+            parser = LoginParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_login(parsed_query["username"], parsed_query["password"])
             print(result)
 
 
