@@ -4,6 +4,7 @@ from parser.update_parser import UpdateParser
 from parser.insert_parser import InsertParser
 from parser.delete_parser import DeleteParser
 from parser.create_parser import CreateTableParser
+from parser.create_database_parser import CreateDatabaseParser
 from parser.count_parser import CountParser
 from parser.use_parser import UseDatabaseParser 
 from parser.drop_parser import DropParser
@@ -45,6 +46,13 @@ while True:
             parsed_query = parser.parse()
             result = executor.execute_use(parsed_query["database"])
             print(result)
+
+        elif tokens[0][0] == "CREATE" and tokens[1][0] == "DATABASE":
+            parser = CreateDatabaseParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_create_database(parsed_query["database"])
+            print(result)
+
 
         elif tokens[0][1] == "ACTUALIZAR":
             parser = UpdateParser(tokens)

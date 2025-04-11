@@ -39,6 +39,9 @@ CREAR TABLA pacientes (ID, NOMBRE, EDAD);
 ```sh
 USAR BASE datos;
 ```
+```sh
+CREAR BASE laboratorio;
+```
 ## Léxico Actual
 
 ```python
@@ -51,6 +54,7 @@ TOKEN_PATTERNS = [
     (r'\bVALORES\b', 'VALUES'),  
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),
+    (r'\bCREAR\b', 'CREATE'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
@@ -88,5 +92,6 @@ TOKEN_PATTERNS = [
     7. Agregar CREATE
     8. Agregar COUNT simple
     9. Agregar USE database
+    10. Agregar CREATE DATABASE
 
     Mucho texto

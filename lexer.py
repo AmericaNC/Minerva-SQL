@@ -9,6 +9,7 @@ TOKEN_PATTERNS = [
     (r'\bVALORES\b', 'VALUES'),  
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),
+    (r'\bCREAR\b', 'CREATE'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),

@@ -13,6 +13,12 @@ class Executor:
     
     def execute_use(self, db_name):
         return self.db.use_database(db_name)
+    
+    def execute_create_database(self, name):
+        if name in self.db.databases:
+            return f"La base de datos '{name}' ya existe."
+        self.db.databases[name] = {}
+        return f"Base de datos '{name}' creada exitosamente."
 
     def execute_update(self, table_name, column, value, where_clause):
         #print(f"\n🔍 Ejecutando UPDATE en '{table_name}' - SET {column} = {value} DONDE {where_clause}")
