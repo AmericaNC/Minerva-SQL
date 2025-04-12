@@ -2,7 +2,7 @@ import re
 
 TOKEN_PATTERNS = [
     (r'\bSELECCIONA\b', 'SELECCIONA'),
-    #(r'\bELIMINAR\b', 'ELIMINAR'),
+    (r'\bBORRAR\b', 'ELIMINAR'),
     (r'\bDESDE\b', 'DESDE'),
     (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),

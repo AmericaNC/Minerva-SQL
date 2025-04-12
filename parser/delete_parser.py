@@ -10,10 +10,13 @@ class DeleteParser:
         return False
 
     def parse(self):
-        if not self.match("DELETE"):
-            raise SyntaxError("Se esperaba 'ELIMINAR'")
+        # Aquí buscamos el token 'ELIMINAR', que es como lo traduce el lexer desde 'BORRAR'
+        if not self.match("ELIMINAR"):
+            raise SyntaxError("Se esperaba 'BORRAR'")
+        
         if not self.match("FROM"):
             raise SyntaxError("Se esperaba 'DE'")
+        
         if self.tokens[self.pos][0] != "IDENTIFIER":
             raise SyntaxError("Se esperaba el nombre de la tabla")
         
@@ -24,11 +27,22 @@ class DeleteParser:
         if self.match("DONDE"):
             if self.pos + 2 >= len(self.tokens):
                 raise SyntaxError("Condición WHERE incompleta")
+            
             column = self.tokens[self.pos][1]
             operator = self.tokens[self.pos + 1][0]
             value = self.tokens[self.pos + 2][1]
             self.pos += 3
-            where_clause = (column, operator, int(value) if value.isdigit() else float(value) if "." in value else value)
+
+            # Conversión de valor a tipo adecuado
+            if value.isdigit():
+                value = int(value)
+            elif "." in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass  # mantener como string si no se puede convertir
+
+            where_clause = (column, operator, value)
 
         return {
             "type": "DELETE",

@@ -90,6 +90,11 @@
             "sintaxis": "BASE_ACTUAL",
             "ejemplo": "BASE_ACTUAL"
         },
+        "MODO_DEPURACION": {
+            "descripcion": "Muestra el proceso de interpretacion de tu instruccion.",
+            "sintaxis": "MODO DEPURACION",
+            "ejemplo": "MODO DEPURACION"
+        },
         "HELP": {
             "descripcion": "Muestra este sistema de ayuda",
             "sintaxis": "HELP [comando]",

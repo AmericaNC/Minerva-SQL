@@ -1,9 +1,14 @@
 # Intérprete Funcional
 
-### Tareas Pendientes:
-1. Guardar los datos en un `data.json`.
-2. Agregar más símbolos al alfabeto.
-3. Agregar la interfaz gráfica.
+```
+  ___      ___   __    _____  ___    _______   _______  ___      ___  __        ________   ______    ___       
+ |"  \    /"  | |" \  (\"   \|"  \  /"     "| /"      \|"  \    /"  |/""\      /"       ) /    " \  |"  |      
+  \   \  //   | ||  | |.\\   \    |(: ______)|:        |\   \  //  //    \    (:   \___/ // ____  \ ||  |      
+  /\\  \/.    | |:  | |: \.   \\  | \/    |  |_____/   ) \\  \/. .//' /\  \    \___  \  /  /    )  )|:  |     
+ |: \.        | |.  | |.  \    \. | // ___)_  //      /   \.    ////  __'  \    __/  \\(: (____/ //  \  |___  
+ |.  \    /:  | /\  |\|    \    \ |(:      "||:  __   \    \\   //   /  \\  \  /" \   :)\         \ ( \_|:  \ 
+ |___|\__/|___|(__\_|_)\___|\____\) \_______)|__|  \___)    \__/(___/    \___)(_______/  \"____/\__\ \_______)
+```
 
 ## 🚀 Cómo Ejecutarlo
 ```sh
@@ -25,7 +30,7 @@ INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
 ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
 ```sh
-ELIMINAR DE datos DONDE HR EQ 90;
+BORRAR DE datos DONDE HR EQ 90;
 ```
 ```sh
 DESHACER TABLA datos;
@@ -68,6 +73,12 @@ USUARIO_ACTUAL;
 ```
 ```sh
 BASE_ACTUAL;
+```
+```sh
+HELP
+```
+```sh
+MODO DEPURACION
 ```
 ## Permisos disponibles
 |   Permiso           |     Descripción                          |

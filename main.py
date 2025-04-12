@@ -303,7 +303,7 @@ while True:
                 print(f"Resultado: {result}")
 
         
-        elif tokens[0][1] == "ELIMINAR":
+        elif tokens[0][1] == "BORRAR":
             if len(tokens) > 1 and tokens[1][0] == "USER":  # <--- esto es clave
                 from parser.eliminar_usuario_parser import EliminarUsuarioParser
                 parser = EliminarUsuarioParser(tokens)
@@ -365,6 +365,7 @@ while True:
                 print(f"\n{Fore.YELLOW}Comandos disponibles:{Style.RESET_ALL}")
                 for cmd in help_data["comandos"]:
                     print(f"  {Fore.CYAN}{cmd.ljust(12)}{Style.RESET_ALL} - {help_data['comandos'][cmd]['descripcion']}")
+                print(f"\nUsa el comando {Fore.CYAN}MODO DEPURACION {Style.RESET_ALL} para depurar paso por paso cada instrucción. Consulta su funcionamiento con HELP MODO_DEPURACION\n")
                 print(f"\nUsa {Fore.GREEN}HELP [comando]{Style.RESET_ALL} para detalles específicos\n")
             else:
         # Mostrar ayuda específica
