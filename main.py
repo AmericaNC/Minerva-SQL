@@ -70,6 +70,11 @@ while True:
             result = executor.execute(parsed_query)
             print(result)
 
+        elif tokens[0][0] == "CURRENT_DATABASE":
+            parsed_query = {"type": "CURRENT_DATABASE"}
+            result = executor.execute(parsed_query)
+            print(result)
+
         elif tokens[0][0] == "CREATE" and tokens[1][0] == "USER":
             parser = CreateUserParser(tokens)
             parsed_query = parser.parse()

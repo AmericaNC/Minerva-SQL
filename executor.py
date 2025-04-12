@@ -9,7 +9,12 @@ class Executor:
             return self.execute_insert(parsed_query["table"], parsed_query["values"])
         elif parsed_query["type"] == "CURRENT_USER":
             return self.execute_current_user()
+        elif parsed_query["type"] == "CURRENT_DATABASE":
+            return self.execute_current_database()
 
+    
+    def execute_current_database(self):
+        return f"Base de datos actual: {self.db.current_db}"
 
     def execute_create_user(self, username, password):
         return self.db.create_user(username, password)
