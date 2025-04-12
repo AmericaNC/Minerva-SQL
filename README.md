@@ -63,22 +63,25 @@ MOSTRAR USUARIOS
 ```sh
 OTORGAR crear_tabla A fernando;
 ```
+```sh
+USUARIO_ACTUAL;
+```
 ## Permisos disponibles
-| Permiso           | Descripción                          |
-|-------------------|--------------------------------------|
-| eliminar_usuario  | Eliminar un usuario del sistema      |
-| ver_bases         | Listar todas las bases de datos      |
-| otorgar           | Asignar permisos a usuarios          |
-| ver_tablas        | Mostrar tablas de una base           |
-| insertar          | Añadir nuevos registros              |
-| usar_base         | Seleccionar una base para trabajar   |
-| ver_usuarios      | Listar usuarios existentes           |
-| crear_base        | Crear nuevas bases de datos          |
-| actualizar        | Modificar registros existentes       |
-| contar            | Obtener cantidad de registros        |
-| eliminar          | Borrar registros                     |
-| crear_tabla       | Crear nuevas tablas                  |
-| eliminar_tabla    | Eliminar tablas existentes           |
+|   Permiso           |     Descripción                          |
+|---------------------|------------------------------------------|
+|   eliminar_usuario  |     Eliminar un usuario del sistema      |
+|   ver_bases         |     Listar todas las bases de datos      |
+|   otorgar           |     Asignar permisos a usuarios          |
+|   ver_tablas        |     Mostrar tablas de una base           |
+|   insertar          |     Añadir nuevos registros              |
+|   usar_base         |     Seleccionar una base para trabajar   |
+|   ver_usuarios      |     Listar usuarios existentes           |
+|   crear_base        |     Crear nuevas bases de datos          |
+|   actualizar        |     Modificar registros existentes       |
+|   contar            |     Obtener cantidad de registros        |
+|   eliminar          |     Borrar registros                     |
+|   crear_tabla       |     Crear nuevas tablas                  |
+|   eliminar_tabla    |     Eliminar tablas existentes           |
 ## Léxico Actual
 
 ```python
