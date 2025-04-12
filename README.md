@@ -66,6 +66,9 @@ OTORGAR crear_tabla A fernando;
 ```sh
 USUARIO_ACTUAL;
 ```
+```sh
+BASE_ACTUAL;
+```
 ## Permisos disponibles
 |   Permiso           |     Descripción                          |
 |---------------------|------------------------------------------|
