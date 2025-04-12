@@ -1,3 +1,5 @@
+from colorama import Fore, Style
+
 class Executor:
     def __init__(self, db):
         self.db = db
@@ -14,15 +16,18 @@ class Executor:
 
     
     def execute_current_database(self):
-        return f"Base de datos actual: {self.db.current_db}"
+        result = f"Base de datos actual: {self.db.current_db}"
+        return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_create_user(self, username, password):
-        return self.db.create_user(username, password)
+        result = self.db.create_user(username, password)
+        return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_login(self, username, password):
         if username in self.db.users and self.db.users[username] == password:
             self.db.current_user = username
-            return f"Sesión iniciada como '{username}'."
+            result = f"Sesión iniciada como '{username}'."
+            return Fore.GREEN + result + Style.RESET_ALL
         else:
             raise ValueError("Usuario o contraseña incorrectos.")
 
@@ -30,9 +35,11 @@ class Executor:
     def execute_eliminar_usuario(self, username):
         self.check_permission("eliminar_usuario")
         if username not in self.db.users:
-            return f"El usuario '{username}' no existe."
+            result = f"El usuario '{username}' no existe."
+            return Fore.RED + result + Style.RESET_ALL
         del self.db.users[username]
-        return f"Usuario '{username}' eliminado."
+        result = f"Usuario '{username}' eliminado."
+        return Fore.GREEN + result + Style.RESET_ALL
     
     def execute_show_databases(self):
         self.check_permission("ver_bases")
@@ -45,8 +52,8 @@ class Executor:
         if usuario not in self.db.permissions:
             self.db.permissions[usuario] = set()
         self.db.permissions[usuario].add(permiso)
-        return f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
-
+        result = f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
+        return Fore.GREEN + result + Style.RESET_ALL
     
     def execute_show_tables(self):
         self.check_permission("ver_tablas")
@@ -68,7 +75,8 @@ class Executor:
        if db_name not in self.db.databases:
         raise ValueError(f"La base de datos '{db_name}' no existe.")
        self.db.current_db = db_name
-       return f"Usando base de datos: {db_name}"
+       result = f"Usando base de datos: {db_name}"
+       return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_show_users(self):
        self.check_permission("ver_usuarios")
@@ -87,9 +95,11 @@ class Executor:
     def execute_create_database(self, name):
         self.check_permission("crear_base")
         if name in self.db.databases:
-            return f"La base de datos '{name}' ya existe."
+            result = f"La base de datos '{name}' ya existe."
+            return Fore.RED + result + Style.RESET_ALL
         self.db.databases[name] = {}
-        return f"Base de datos '{name}' creada exitosamente."
+        result = f"Base de datos '{name}' creada exitosamente."
+        return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_update(self, table_name, column, value, where_clause):
         self.check_permission("actualizar")
@@ -109,7 +119,8 @@ class Executor:
     def execute_delete(self, table_name, where_clause):
         self.check_permission("eliminar")
         deleted_rows = self.db.delete(table_name, where_clause)
-        return f"Filas eliminadas: {deleted_rows}"
+        result = f"Filas eliminadas: {deleted_rows}"
+        return Fore.GREEN + result + Style.RESET_ALL
     
     def execute_create(self, table_name, columns):
         self.check_permission("crear_tabla")
@@ -117,13 +128,16 @@ class Executor:
         if table_name in db:
           raise ValueError(f"La tabla '{table_name}' ya existe.")
         db[table_name] = {"columns": columns, "rows": []}
-        return f"Tabla '{table_name}' creada con columnas {columns}."
+        result = f"Tabla '{table_name}' creada con columnas {columns}."
+        return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_drop(self, table_name):
         self.check_permission("eliminar_tabla")
         if table_name in self.db.tables:
             del self.db.tables[table_name]
-            return f"Tabla '{table_name}' eliminada."
+            result = f"Tabla '{table_name}' eliminada."
+            return Fore.GREEN + result + Style.RESET_ALL
         else:
-            return f"La tabla '{table_name}' no existe."
+            result = f"La tabla '{table_name}' no existe."
+            return Fore.GREEN + result + Style.RESET_ALL
 
