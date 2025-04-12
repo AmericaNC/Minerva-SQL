@@ -12,8 +12,13 @@ class DropParser:
             raise SyntaxError(f"Se esperaba {expected_type}, pero se encontró {token_type}")
 
     def parse(self):
-        self.consume("DROP")
-        self.consume("TABLE")
+        if self.tokens[0][1] == "DROP":
+            self.consume("DROP")
+        elif self.tokens[0][1] == "DESHACER":
+            self.consume("DESHACER")
+        else:
+            raise SyntaxError("Se esperaba DROP o DESHACER.")
+
         table_name = self.consume("IDENTIFIER")
         self.consume("SEMICOLON")
-        return {"type": "DROP", "table": table_name}
+        return {"type": "UNDO", "table": table_name}

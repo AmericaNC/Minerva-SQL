@@ -33,7 +33,7 @@ ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 BORRAR DE datos DONDE HR EQ 90;
 ```
 ```sh
-DESHACER TABLA datos;
+DESHACER datos;
 ```
 ```sh
 CONTAR DESDE datos;
@@ -70,6 +70,9 @@ OTORGAR crear_tabla A fernando;
 ```
 ```sh
 USUARIO_ACTUAL;
+```
+```sh
+ELIMINAR BASE oficina;
 ```
 ```sh
 BASE_ACTUAL;
@@ -169,3 +172,10 @@ TOKEN_PATTERNS = [
     15. Mostar tablas generalmente
     16. Mostrar usuarios
     17. Otorgar permisos a usuarios
+
+    MODIFICAR 
+    Mostrar bases (incluir lectura en tiempo real)
+    Usar base (incluir lectura en tiempo real)
+    Una vez insertado el primer registro, borrar el primero por default (nulo) INSERT
+    ARREGLAR EL DROP QUE NO SIRVE
+    

@@ -30,7 +30,7 @@ TOKEN_PATTERNS = [
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),
     (r'\bTABLA\b', 'TABLE'),
-    (r'\bDESHACER\b', 'DROP'),
+    (r'\bDESHACER\b', 'DESHACER'),
     (r'\bELIMINAR\b', 'DELETE'),
     (r'\bDE\b', 'FROM'),
     (r'\bCONTAR\b', 'COUNT'),

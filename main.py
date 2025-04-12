@@ -334,15 +334,16 @@ while True:
                     print(f"Resultado: {result}")
    
         elif tokens[0][1] == "DESHACER":
+            from parser.drop_parser import DropParser  # o como lo estés organizando
             parser = DropParser(tokens)
             parsed_query = parser.parse()
-            current_path = os.path.join("databases", db.current_database)  # db = instancia de Database
-            result = db.drop_table(parsed_query["table"], current_path)
+            result = executor.execute_drop_table(parsed_query["table"])
             if debug_mode:
                 print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             else:
                 print(f"Resultado: {result}")
+
 
         elif tokens[0][1] == "CREAR":
             parser = CreateTableParser(tokens)
@@ -382,6 +383,17 @@ while True:
                     print(f"{Fore.CYAN}Ejemplo:{Style.RESET_ALL}     {info['ejemplo']}\n")
                 else:
                     print(f"{Fore.RED}Error: Comando '{cmd}' no reconocido{Style.RESET_ALL}")
+
+        elif tokens[0][0] == "DELETE" and tokens[1][0] == "DATABASE":
+            from parser.drop_database_parser import DropDatabaseParser
+            parser = DropDatabaseParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_drop_database(parsed_query["name"])
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
 
         else:
             raise SyntaxError("Comando no reconocido")

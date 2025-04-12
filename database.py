@@ -188,8 +188,9 @@ class Database:
         self.save_table(table_name)
         return updated_rows
      
-    def drop_table(self, table_name, current_path):
+    def drop_table(self, table_name):
         """Elimina físicamente y en memoria la tabla indicada."""
+        current_path = os.path.join("databases", self.current_db)
         table_file = os.path.join(current_path, f"{table_name}.json")
         if table_name in self.tables:
             del self.tables[table_name]
@@ -200,6 +201,15 @@ class Database:
             print(f"Archivo {table_file} no existe.")
         return False
 
+    def drop_database(self, db_name):
+        db_path = self.databases_path / db_name
+        if not db_path.exists():
+            raise FileNotFoundError(f"La base de datos '{db_name}' no existe.")
+        import shutil
+        shutil.rmtree(db_path)
+        if db_name in self.databases:
+            del self.databases[db_name]
+        return True
 
     def check_condition(row, column, operator, value):
         row_value = row.get(column)

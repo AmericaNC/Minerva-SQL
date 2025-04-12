@@ -15,10 +15,20 @@ class Executor:
         elif parsed_query["type"] == "CURRENT_DATABASE":
             return self.execute_current_database()
 
-    
     def execute_current_database(self):
         result = f"Base de datos actual: {self.db.current_db}"
         return Fore.GREEN + result + Style.RESET_ALL
+    
+    def execute_drop_database(self, db_name):
+        self.check_permission("eliminar")
+        if db_name == self.db.current_db:
+            return "No se puede eliminar la base de datos actualmente en uso."
+        try:
+            self.db.drop_database(db_name)
+            return f"Base de datos '{db_name}' eliminada correctamente."
+        except Exception as e:
+            return f"Error al eliminar base de datos: {str(e)}"
+
 
     def execute_create_user(self, username, password):
         result = self.db.create_user(username, password)
@@ -57,11 +67,13 @@ class Executor:
         self.db.permissions[usuario].add(permiso)
         result = f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
         return Fore.GREEN + result + Style.RESET_ALL
-    
+
     def execute_show_tables(self):
         self.check_permission("ver_tablas")
         current_db = self.db.current_db
+        self.db.databases[current_db] = self.db.load_tables(current_db)  # << Esta línea es clave
         return list(self.db.databases[current_db].keys())
+
     
     def execute_show_tables_in(self, db_name):
         self.check_permission("ver_tablas")
@@ -116,7 +128,6 @@ class Executor:
         self.db.save_table(table_name)  # 💾 Guardar cambios
         return f"Filas actualizadas: {resultado}"
 
-    
     def execute_current_user(self):
         user = self.db.current_user
         return f"Usuario actual: {user}" if user else "No hay sesión activa."
@@ -131,13 +142,12 @@ class Executor:
         self.db.save_table(table_name)  # 💾 Guardar cambios
         result = f"Filas eliminadas: {deleted_rows}"
         return Fore.GREEN + result + Style.RESET_ALL
-
     
     def execute_create(self, table_name, columns):
         self.check_permission("crear_tabla")
         if table_name in self.db.tables:
             raise ValueError(f"La tabla '{table_name}' ya existe.")
-        self.db.tables[table_name] = [{col: None for col in columns}]
+        self.db.tables[table_name] = []
         self.db.save_table(table_name)  # 💾 Guardar la nueva tabla
         result = f"Tabla '{table_name}' creada con columnas {columns}."
         return Fore.GREEN + result + Style.RESET_ALL
