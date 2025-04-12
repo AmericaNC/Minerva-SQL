@@ -7,6 +7,7 @@ TOKEN_PATTERNS = [
     (r'\bDONDE\b', 'DONDE'),
     (r'\bINSERTAR\b', 'INSERT'),
     (r'\bEN\b', 'INTO'),  
+    (r'\bUSUARIO_ACTUAL\b', 'CURRENT_USER'),
     (r'\bVALORES\b', 'VALUES'),  
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),

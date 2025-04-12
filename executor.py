@@ -7,6 +7,9 @@ class Executor:
             return self.db.select(parsed_query["table"], parsed_query["columns"], parsed_query["where"])
         elif parsed_query["type"] == "INSERT":
             return self.execute_insert(parsed_query["table"], parsed_query["values"])
+        elif parsed_query["type"] == "CURRENT_USER":
+            return self.execute_current_user()
+
 
     def execute_create_user(self, username, password):
         return self.db.create_user(username, password)
@@ -90,6 +93,10 @@ class Executor:
         #print(f"🛠 Resultado de UPDATE: {resultado}")
         return resultado
     
+    def execute_current_user(self):
+        user = self.db.current_user
+        return f"Usuario actual: {user}" if user else "No hay sesión activa."
+
     def execute_count(self, table_name, where_clause):
         self.check_permission("contar")
         return self.db.count(table_name, where_clause)

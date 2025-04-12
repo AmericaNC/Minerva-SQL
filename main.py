@@ -45,6 +45,7 @@ while True:
             parsed_query = parser.parse()
             result = executor.execute_grant(parsed_query["permiso"], parsed_query["usuario"])
             print(result)
+        
 
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)
@@ -62,6 +63,11 @@ while True:
             parser = CreateDatabaseParser(tokens)
             parsed_query = parser.parse()
             result = executor.execute_create_database(parsed_query["database"])
+            print(result)
+        
+        elif tokens[0][0] == "CURRENT_USER":
+            parsed_query = {"type": "CURRENT_USER"}
+            result = executor.execute(parsed_query)
             print(result)
 
         elif tokens[0][0] == "CREATE" and tokens[1][0] == "USER":
@@ -123,7 +129,6 @@ while True:
             parsed_query = parser.parse()
             result = executor.execute_show_users()
             print(result)
-
 
         elif tokens[0][1] == "ACTUALIZAR":
             parser = UpdateParser(tokens)
