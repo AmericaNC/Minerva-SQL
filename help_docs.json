@@ -1,0 +1,99 @@
+{
+    "comandos": {
+        "SELECCIONA": {
+            "descripcion": "Consulta datos de una tabla",
+            "sintaxis": "SELECCIONA [columnas] DESDE [tabla] [DONDE condición]",
+            "ejemplo": "SELECCIONA HR, TEMP DESDE datos"
+        },
+        "INSERTAR": {
+            "descripcion": "Inserta nuevos registros en una tabla",
+            "sintaxis": "INSERTAR EN [tabla] VALORES (valores)\nINSERTAR EN [tabla] (columnas) VALORES (valores)",
+            "ejemplo": "INSERTAR EN datos VALORES (130, 39)\nINSERTAR EN datos (HR, TEMP) VALORES (100, 37.1)"
+        },
+        "ACTUALIZAR": {
+            "descripcion": "Modifica registros existentes",
+            "sintaxis": "ACTUALIZAR [tabla] CON [columna=valor] DONDE [condición]",
+            "ejemplo": "ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5"
+        },
+        "ELIMINAR": {
+            "descripcion": "Borra registros de una tabla",
+            "sintaxis": "ELIMINAR DE [tabla] DONDE [condición]",
+            "ejemplo": "ELIMINAR DE datos DONDE HR EQ 90"
+        },
+        "DESHACER": {
+            "descripcion": "Elimina una tabla completa",
+            "sintaxis": "DESHACER TABLA [nombre_tabla]",
+            "ejemplo": "DESHACER TABLA datos"
+        },
+        "CONTAR": {
+            "descripcion": "Cuenta registros en una tabla",
+            "sintaxis": "CONTAR DESDE [tabla] [DONDE condición]",
+            "ejemplo": "CONTAR DESDE datos"
+        },
+        "CREAR": {
+            "descripcion": "Crea una nueva tabla",
+            "sintaxis": "CREAR TABLA [nombre] (col1, col2, ...)",
+            "ejemplo": "CREAR TABLA pacientes (ID, NOMBRE, EDAD)"
+        },
+        "USAR": {
+            "descripcion": "Selecciona una base de datos para trabajar",
+            "sintaxis": "USAR BASE [nombre_base]",
+            "ejemplo": "USAR BASE datos"
+        },
+        "CREAR_BASE": {
+            "descripcion": "Crea una nueva base de datos",
+            "sintaxis": "CREAR BASE [nombre_base]",
+            "ejemplo": "CREAR BASE laboratorio"
+        },
+        "CREAR_USUARIO": {
+            "descripcion": "Registra un nuevo usuario",
+            "sintaxis": "CREAR USUARIO [nombre] PARA [contraseña]",
+            "ejemplo": "CREAR USUARIO fernando PARA 1234"
+        },
+        "LOGIN": {
+            "descripcion": "Inicia sesión con un usuario",
+            "sintaxis": "LOGIN [usuario] PARA [contraseña]",
+            "ejemplo": "LOGIN fernando PARA 1234"
+        },
+        "ELIMINAR_USUARIO": {
+            "descripcion": "Borra un usuario del sistema",
+            "sintaxis": "ELIMINAR USUARIO [nombre]",
+            "ejemplo": "ELIMINAR USUARIO fernando"
+        },
+        "MOSTRAR_BASES": {
+            "descripcion": "Lista todas las bases de datos",
+            "sintaxis": "MOSTRAR BASES",
+            "ejemplo": "MOSTRAR BASES"
+        },
+        "MOSTRAR_TABLAS": {
+            "descripcion": "Lista tablas en la base actual",
+            "sintaxis": "MOSTRAR TABLAS",
+            "ejemplo": "MOSTRAR TABLAS"
+        },
+        "MOSTRAR_USUARIOS": {
+            "descripcion": "Lista usuarios registrados",
+            "sintaxis": "MOSTRAR USUARIOS",
+            "ejemplo": "MOSTRAR USUARIOS"
+        },
+        "OTORGAR": {
+            "descripcion": "Asigna permisos a usuarios",
+            "sintaxis": "OTORGAR [permiso] A [usuario]",
+            "ejemplo": "OTORGAR crear_tabla A fernando"
+        },
+        "USUARIO_ACTUAL": {
+            "descripcion": "Muestra el usuario con sesión activa",
+            "sintaxis": "USUARIO_ACTUAL",
+            "ejemplo": "USUARIO_ACTUAL"
+        },
+        "BASE_ACTUAL": {
+            "descripcion": "Muestra la base de datos en uso",
+            "sintaxis": "BASE_ACTUAL",
+            "ejemplo": "BASE_ACTUAL"
+        },
+        "HELP": {
+            "descripcion": "Muestra este sistema de ayuda",
+            "sintaxis": "HELP [comando]",
+            "ejemplo": "HELP INSERTAR"
+        }
+    }
+}

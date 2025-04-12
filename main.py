@@ -15,6 +15,8 @@ from parser.use_parser import UseDatabaseParser
 from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
+import json
+from pathlib import Path
 from colorama import init, Fore,  Style
 
 welcome_message = f"""
@@ -30,10 +32,22 @@ welcome_message = f"""
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 {Fore.WHITE}🚀 {Fore.WHITE}MinervaSQL | {Fore.WHITE}Intérprete SQL en Español {Fore.YELLOW}v1.0{Fore.WHITE} | 
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
- 
+{Fore.WHITE}  ¡Bienvenido a MinervaSQL! Usa el comando{Fore.GREEN} HELP {Fore.WHITE}para obtener ayuda epecifica en las instrucciones.
 {Fore.WHITE}                                                                                                         
 """
 print(welcome_message)
+
+def cargar_ayuda():
+    try:
+        with open('help_docs.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"{Fore.RED}Error: Archivo de ayuda no encontrado{Style.RESET_ALL}")
+        return {"comandos": {}}
+    except json.JSONDecodeError:
+        print(f"{Fore.RED}Error: Archivo de ayuda mal formado{Style.RESET_ALL}")
+        return {"comandos": {}}
+help_data = cargar_ayuda()
 
 db = Database()
 executor = Executor(db)
@@ -46,7 +60,7 @@ db.tables["datos"] = [
 ]
 
 while True:
-    query = input(Fore.BLUE + "Consulta > " + Style.RESET_ALL)
+    query = input(Fore.CYAN + "Consulta > " + Style.RESET_ALL)
     if query.lower() in ["salir", "exit"]:
         break
     try:
@@ -65,7 +79,6 @@ while True:
             result = executor.execute_grant(parsed_query["permiso"], parsed_query["usuario"])
             print(result)
         
-
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)
             parsed_query = parser.parse()
@@ -191,6 +204,26 @@ while True:
             parsed_query = parser.parse()
             result = executor.execute_count(parsed_query["table"], parsed_query["where"])
             print(f"Resultado: {result}")
+        
+
+        elif tokens[0][1] == "HELP":
+            if len(tokens) == 1:
+        # Mostrar lista de comandos disponibles
+                print(f"\n{Fore.YELLOW}Comandos disponibles:{Style.RESET_ALL}")
+                for cmd in help_data["comandos"]:
+                    print(f"  {Fore.CYAN}{cmd.ljust(12)}{Style.RESET_ALL} - {help_data['comandos'][cmd]['descripcion']}")
+                print(f"\nUsa {Fore.GREEN}HELP [comando]{Style.RESET_ALL} para detalles específicos\n")
+            else:
+        # Mostrar ayuda específica
+                cmd = tokens[1][1]
+                if cmd in help_data["comandos"]:
+                    info = help_data["comandos"][cmd]
+                    print(f"\n{Fore.YELLOW}AYUDA PARA {cmd}{Style.RESET_ALL}")
+                    print(f"{Fore.CYAN}Descripción:{Style.RESET_ALL} {info['descripcion']}")
+                    print(f"{Fore.CYAN}Sintaxis:{Style.RESET_ALL}    {info['sintaxis']}")
+                    print(f"{Fore.CYAN}Ejemplo:{Style.RESET_ALL}     {info['ejemplo']}\n")
+                else:
+                    print(f"{Fore.RED}Error: Comando '{cmd}' no reconocido{Style.RESET_ALL}")
 
         else:
             raise SyntaxError("Comando no reconocido")
