@@ -31,7 +31,7 @@ welcome_message = f"""
 {Fore.WHITE}🚀 {Fore.WHITE}MinervaSQL | {Fore.WHITE}Intérprete SQL en Español {Fore.YELLOW}v1.0{Fore.WHITE} | 
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
  
-                                                                                                             
+{Fore.WHITE}                                                                                                         
 """
 print(welcome_message)
 
@@ -46,7 +46,7 @@ db.tables["datos"] = [
 ]
 
 while True:
-    query = input("Consulta > ")
+    query = input(Fore.BLUE + "Consulta > " + Style.RESET_ALL)
     if query.lower() in ["salir", "exit"]:
         break
     try:
