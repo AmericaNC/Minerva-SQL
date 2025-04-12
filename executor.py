@@ -1,4 +1,5 @@
 from colorama import Fore, Style
+import os
 
 class Executor:
     def __init__(self, db):
@@ -43,7 +44,9 @@ class Executor:
     
     def execute_show_databases(self):
         self.check_permission("ver_bases")
-        return list(self.db.databases.keys())
+        dbs = self.db.list_databases()
+        return dbs  # ← Devuelve la lista real, no el string formateado
+
     
     def execute_grant(self, permiso, usuario):
         self.check_permission("otorgar")
@@ -68,8 +71,13 @@ class Executor:
 
     def execute_insert(self, table_name, values, columns):
         self.check_permission("insertar")
-        return self.db.insert(table_name, values, columns)
-    
+        if table_name not in self.db.tables:
+            raise ValueError(f"Tabla '{table_name}' no existe")
+        entry = dict(zip(columns, values))
+        self.db.tables[table_name].append(entry)
+        self.db.save_table(table_name)  # 💾 Guardar automáticamente
+        return f"Insertado en {table_name}: {entry}"
+
     def execute_use(self, db_name):
        self.check_permission("usar_base")
        if db_name not in self.db.databases:
@@ -91,22 +99,23 @@ class Executor:
         if user not in self.db.permissions or permiso not in self.db.permissions[user]:
             raise PermissionError(f"Permiso '{permiso}' requerido.")
 
-
     def execute_create_database(self, name):
         self.check_permission("crear_base")
         if name in self.db.databases:
             result = f"La base de datos '{name}' ya existe."
             return Fore.RED + result + Style.RESET_ALL
         self.db.databases[name] = {}
+        db_folder = self.db.databases_path / name
+        db_folder.mkdir(exist_ok=True)
         result = f"Base de datos '{name}' creada exitosamente."
         return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_update(self, table_name, column, value, where_clause):
         self.check_permission("actualizar")
-        #print(f"\n🔍 Ejecutando UPDATE en '{table_name}' - SET {column} = {value} DONDE {where_clause}")
         resultado = self.db.update(table_name, column, value, where_clause)
-        #print(f"🛠 Resultado de UPDATE: {resultado}")
-        return resultado
+        self.db.save_table(table_name)  # 💾 Guardar cambios
+        return f"Filas actualizadas: {resultado}"
+
     
     def execute_current_user(self):
         user = self.db.current_user
@@ -119,25 +128,38 @@ class Executor:
     def execute_delete(self, table_name, where_clause):
         self.check_permission("eliminar")
         deleted_rows = self.db.delete(table_name, where_clause)
+        self.db.save_table(table_name)  # 💾 Guardar cambios
         result = f"Filas eliminadas: {deleted_rows}"
         return Fore.GREEN + result + Style.RESET_ALL
+
     
     def execute_create(self, table_name, columns):
         self.check_permission("crear_tabla")
-        db = self.db.databases[self.db.current_db]
-        if table_name in db:
-          raise ValueError(f"La tabla '{table_name}' ya existe.")
-        db[table_name] = {"columns": columns, "rows": []}
+        if table_name in self.db.tables:
+            raise ValueError(f"La tabla '{table_name}' ya existe.")
+        self.db.tables[table_name] = [{col: None for col in columns}]
+        self.db.save_table(table_name)  # 💾 Guardar la nueva tabla
         result = f"Tabla '{table_name}' creada con columnas {columns}."
         return Fore.GREEN + result + Style.RESET_ALL
+
+    def execute_drop_table(self, table_name):
+        self.check_permission("eliminar")
+        success = self.db.drop_table(table_name)
+        return f"Tabla '{table_name}' eliminada." if success else f"No se pudo eliminar la tabla '{table_name}'."
+
 
     def execute_drop(self, table_name):
         self.check_permission("eliminar_tabla")
         if table_name in self.db.tables:
             del self.db.tables[table_name]
-            result = f"Tabla '{table_name}' eliminada."
+            db_folder = self.db.databases_path / self.db.current_db
+            file_path = db_folder / f"{table_name}.json"
+            if file_path.exists():
+                file_path.unlink()  # 🗑️ Borrar archivo
+                result = f"Tabla '{table_name}' eliminada."
             return Fore.GREEN + result + Style.RESET_ALL
         else:
             result = f"La tabla '{table_name}' no existe."
             return Fore.GREEN + result + Style.RESET_ALL
+
 

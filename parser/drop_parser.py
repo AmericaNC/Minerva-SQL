@@ -1,23 +1,19 @@
 class DropParser:
     def __init__(self, tokens):
         self.tokens = tokens
-        self.pos = 0
+        self.position = 0
 
-    def match(self, expected_type):
-        if self.pos < len(self.tokens) and self.tokens[self.pos][0] == expected_type:
-            self.pos += 1
-            return True
-        return False
+    def consume(self, expected_type):
+        token_type, token_value = self.tokens[self.position]
+        if token_type == expected_type:
+            self.position += 1
+            return token_value
+        else:
+            raise SyntaxError(f"Se esperaba {expected_type}, pero se encontró {token_type}")
 
     def parse(self):
-        if not self.match("DROP"):
-            raise SyntaxError("Se esperaba 'DESHACER'")
-        if not self.match("TABLE"):
-            raise SyntaxError("Se esperaba 'TABLA'")
-        if self.tokens[self.pos][0] != "IDENTIFIER":
-            raise SyntaxError("Se esperaba el nombre de la tabla")
-
-        table_name = self.tokens[self.pos][1]
-        self.pos += 1
-
+        self.consume("DROP")
+        self.consume("TABLE")
+        table_name = self.consume("IDENTIFIER")
+        self.consume("SEMICOLON")
         return {"type": "DROP", "table": table_name}

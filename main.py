@@ -16,6 +16,7 @@ from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
 import json
+import os
 from pathlib import Path
 from colorama import init, Fore,  Style
 
@@ -225,6 +226,7 @@ while True:
  
 
         elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "BASES":
+            result = executor.execute_show_databases()
             from parser.show_parser import ShowDatabasesParser
             parser = ShowDatabasesParser(tokens)
             parsed_query = parser.parse()
@@ -330,16 +332,18 @@ while True:
                     print(json.dumps(result, indent=2, ensure_ascii=False))
                 else:
                     print(f"Resultado: {result}")
-        
+   
         elif tokens[0][1] == "DESHACER":
             parser = DropParser(tokens)
             parsed_query = parser.parse()
+            current_path = os.path.join("databases", db.current_database)  # db = instancia de Database
+            result = db.drop_table(parsed_query["table"], current_path)
             if debug_mode:
                 print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             else:
                 print(f"Resultado: {result}")
-        
+
         elif tokens[0][1] == "CREAR":
             parser = CreateTableParser(tokens)
             parsed_query = parser.parse()

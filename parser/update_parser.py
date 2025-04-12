@@ -12,22 +12,23 @@ class UpdateParser:
             raise SyntaxError(f"Se esperaba {expected_type}, pero se encontró {token_type}")
 
     def parse(self):
-        #print(f"🔍 Tokens en UpdateParser: {self.tokens}")  # Para ver qué estamos recibiendo
-
         self.consume("ACTUALIZAR")  # Ahora buscamos 'ACTUALIZAR'
         table_name = self.consume("IDENTIFIER")
         self.consume("SET")
         column = self.consume("IDENTIFIER")
         self.consume("EQ")
 
-        # Aceptar tanto NUMBER como FLOAT
+     # Aceptar NUMBER, FLOAT o STRING
         value_token = self.tokens[self.position]
-        if value_token[0] in ["NUMBER", "FLOAT"]:
-            value = self.consume(value_token[0])  # Usamos el tipo adecuado
+        if value_token[0] == "STRING":
+            value = self.consume("STRING")[1:-1]  # Eliminar comillas
+        elif value_token[0] == "FLOAT":
+            value = float(self.consume("FLOAT"))
+        elif value_token[0] == "NUMBER":
+            value = int(self.consume("NUMBER"))
         else:
-            raise SyntaxError(
-                f"Se esperaba NUMBER o FLOAT, pero se encontró {value_token[0]}"
-            )
+            raise SyntaxError(f"Se esperaba NUMBER, FLOAT o STRING, pero se encontró {value_token[0]}")
+
 
         self.consume("DONDE")
         where_column = self.consume("IDENTIFIER")
@@ -46,14 +47,17 @@ class UpdateParser:
 
         print(
             "🚀 Actualizado correctamente!"
-           # f"🔍 Parsed UPDATE: table={table_name}, column={column}, value={value}, where={where_column} {operator} {where_value}"
         )
 
         return {
             "type": "UPDATE",
             "table": table_name,
             "column": column,
-            "value": float(value) if "." in value else int(value),  # Convertir correctamente
+            "value": (
+            float(value) if isinstance(value, str) and '.' in value else
+            int(value) if isinstance(value, str) and value.isdigit() else
+            value  # ya es un string válido como 'ADN'
+            ),  # Convertir correctamente
             "where": (
                 where_column,
                 operator,

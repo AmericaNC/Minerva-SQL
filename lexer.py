@@ -45,7 +45,7 @@ TOKEN_PATTERNS = [
     (r';', 'SEMICOLON'),
     (r'\(', 'PARIZQ'),
     (r'\)', 'PARDER'),
-    (r'\'[^\']*\'', 'STRING'), 
+    (r'(".*?"|\'.*?\')', 'STRING'),
     (r'\s+', None)  # Espacios en blanco que se ignoran
 ]
 

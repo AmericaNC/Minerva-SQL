@@ -41,7 +41,7 @@ class InsertParser:
                 values.append(float(token_value))  # Es un flotante
                 self.position += 1
             elif token_type == "STRING":
-                values.append(token_value[1:-1])  # Eliminar las comillas simples
+                values.append(token_value[1:-1])  # Eliminar las comillas
                 self.position += 1
             else:
                 raise SyntaxError(f"Se esperaba NUMBER o STRING, pero se encontró {token_type}")
