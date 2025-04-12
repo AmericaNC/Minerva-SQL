@@ -48,7 +48,7 @@ def cargar_ayuda():
         print(f"{Fore.RED}Error: Archivo de ayuda mal formado{Style.RESET_ALL}")
         return {"comandos": {}}
 help_data = cargar_ayuda()
-
+debug_mode = False
 db = Database()
 executor = Executor(db)
 
@@ -63,145 +63,298 @@ while True:
     query = input(Fore.CYAN + "Consulta > " + Style.RESET_ALL)
     if query.lower() in ["salir", "exit"]:
         break
+    if query.strip().upper() == "MODO DEPURACION":
+        debug_mode = not debug_mode
+        estado = "activado" if debug_mode else "desactivado"
+        print(f"{Fore.YELLOW}🔍 Modo depuración {estado}{Style.RESET_ALL}")
+        continue
     try:
         tokens = lexer(query)
-        #print("Tokens:", tokens)        
-        # Detectar si es un SELECT
+        if debug_mode:
+            print(f"\n{Fore.YELLOW}--------------------------------------------------")
+            print(f"Procesando: '{query}'")
+            print(f"--------------------------------------------------{Style.RESET_ALL}")
+            print(f"{Fore.MAGENTA}[DEBUG LEX] Tokens generados:")
+            print(json.dumps(tokens, indent=2, ensure_ascii=False))
+
         if tokens[0][1] == "SELECCIONA":
             parser = SelectParser(tokens)
             parsed_query = parser.parse()
-            result = executor.execute(parsed_query)  # Ejecutar el SELECT
-            print(f"Resultado: {result}")  # Mostrar el resultado final
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
+            result = executor.execute(parsed_query)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
         
         elif tokens[0][1] == "OTORGAR":
             parser = GrantParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_grant(parsed_query["permiso"], parsed_query["usuario"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(result)
         
         elif tokens[0][1] == "INSERTAR":
             parser = InsertParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_insert(parsed_query["table"], parsed_query["values"], parsed_query["columns"])
-            print(f"Resultado: {result}")
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
         
         elif tokens[0][0] == "USE":
             parser = UseDatabaseParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_use(parsed_query["database"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
 
         elif tokens[0][0] == "CREATE" and tokens[1][0] == "DATABASE":
             parser = CreateDatabaseParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_create_database(parsed_query["database"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
         
         elif tokens[0][0] == "CURRENT_USER":
             parsed_query = {"type": "CURRENT_USER"}
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute(parsed_query)
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(result)
 
         elif tokens[0][0] == "CURRENT_DATABASE":
             parsed_query = {"type": "CURRENT_DATABASE"}
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute(parsed_query)
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(result)
 
         elif tokens[0][0] == "CREATE" and tokens[1][0] == "USER":
             parser = CreateUserParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_create_user(parsed_query["username"], parsed_query["password"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+  
 
         elif tokens[0][0] == "ELIMINAR" and tokens[1][0] == "USUARIO":
             parser = EliminarUsuarioParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_eliminar_usuario(parsed_query["nombre"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+                print(result)
 
 
         elif tokens[0][0] == "DROP" and tokens[1][0] == "USER":
             parser = DropUserParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_drop_user(parsed_query["username"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+                print(result)
 
 
         elif tokens[0][0] == "LOGIN":
             parser = LoginParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_login(parsed_query["username"], parsed_query["password"])
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+ 
 
         elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "BASES":
             from parser.show_parser import ShowDatabasesParser
             parser = ShowDatabasesParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_show_databases()
-            print("Bases de datos disponibles:", ", ".join(result))
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print("Bases de datos disponibles:", ", ".join(result))
 
         elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "TABLAS":
            from parser.show_tables_parser import ShowTablesParser
            parser = ShowTablesParser(tokens)
            parsed_query = parser.parse()
+           if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
            result = executor.execute_show_tables()
            if result:
             print("Tablas disponibles:", ", ".join(result))
            else:
             print("No hay tablas en la base de datos actual.")
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
 
         elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "TABLAS" and tokens[2][1] == "EN":
            from parser.show_tables_in_parser import ShowTablesInParser
            parser = ShowTablesInParser(tokens)
            parsed_query = parser.parse()
+           if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
+
            result = executor.execute_show_tables_in(parsed_query["database"])
            if result:
             print(f"Tablas en '{parsed_query['database']}':", ", ".join(result))
            else:
             print(f"No hay tablas en '{parsed_query['database']}'")
-        
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+
         elif tokens[0][1] == "MOSTRAR" and tokens[1][1] == "USUARIOS":
             from parser.show_users_parser import ShowUsersParser
             parser = ShowUsersParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_show_users()
-            print(result)
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(result)
 
         elif tokens[0][1] == "ACTUALIZAR":
             parser = UpdateParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_update(parsed_query["table"], parsed_query["column"], parsed_query["value"], parsed_query["where"])
-            print(f"Resultado: {result}")
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+
         
         elif tokens[0][1] == "ELIMINAR":
             if len(tokens) > 1 and tokens[1][0] == "USER":  # <--- esto es clave
                 from parser.eliminar_usuario_parser import EliminarUsuarioParser
                 parser = EliminarUsuarioParser(tokens)
                 parsed_query = parser.parse()
+                if debug_mode:
+                    print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                    print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
                 result = executor.execute_eliminar_usuario(parsed_query["nombre"])
+                if debug_mode:
+                    print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                else:
+                    print(f"Resultado: {result}")
                 print(result)
             else:
                 parser = DeleteParser(tokens)
                 parsed_query = parser.parse()
+                if debug_mode:
+                    print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                    print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
                 result = executor.execute_delete(parsed_query["table"], parsed_query["where"])
-            print(f"Resultado: {result}")
-
+                if debug_mode:
+                    print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                else:
+                    print(f"Resultado: {result}")
         
         elif tokens[0][1] == "DESHACER":
             parser = DropParser(tokens)
             parsed_query = parser.parse()
-            result = executor.execute_drop(parsed_query["table"])
-            print(f"Resultado: {result}")
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
         
         elif tokens[0][1] == "CREAR":
             parser = CreateTableParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_create(parsed_query["table"], parsed_query["columns"])
             print(f"Resultado: {result}")
 
         elif tokens[0][1] == "CONTAR":
             parser = CountParser(tokens)
             parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
             result = executor.execute_count(parsed_query["table"], parsed_query["where"])
             print(f"Resultado: {result}")
         

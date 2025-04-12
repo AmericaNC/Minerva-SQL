@@ -1,0 +1,18 @@
+{
+    "depuracion": {
+        "activo": true,
+        "niveles": [
+            "LEX",
+            "PARSER",
+            "SEMANTICO",
+            "EXEC"
+        ],
+        "log_archivo": "sql_depuracion.log",
+        "mostrar_pantalla": true,
+        "color": true
+    },
+    "configuracion": {
+        "usuario_actual": null,
+        "base_actual": null
+    }
+}

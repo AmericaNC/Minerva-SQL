@@ -9,7 +9,7 @@ class Database:
 
         # Permisos
         self.permissions = {
-            "root": {"crear_tabla", "ver_usuario", "insertar", "usar_base", "crear_base", 
+            "root": {"crear_tabla", "ver_usuarios", "insertar", "usar_base", "crear_base", 
                      "eliminar_usuario", "otorgar", "ver_bases", "ver_tablas", 
                      "actualizar", "contar", "eliminar", "eliminar_tablas"}
         }
