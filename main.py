@@ -12,6 +12,7 @@ from parser.login_parser import LoginParser
 from parser.create_database_parser import CreateDatabaseParser
 from parser.count_parser import CountParser
 from parser.use_parser import UseDatabaseParser 
+from user_manager import UserManager
 from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
@@ -31,7 +32,7 @@ welcome_message = f"""
 |___|\__/|___|(__\_|_)\___|\____\) \_______)|__|  \___)    \__/(___/    \___)(_______/  \"____/\__\ \_______)じしˍ,)ノ     
 
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-{Fore.WHITE}🚀 {Fore.WHITE}MinervaSQL | {Fore.WHITE}Intérprete SQL en Español {Fore.YELLOW}v1.0{Fore.WHITE} | 
+{Fore.WHITE}🚀 {Fore.WHITE}MinervaSQL | {Fore.WHITE}Intérprete SQL en Español {Fore.YELLOW}v3.0{Fore.WHITE} | 
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 {Fore.WHITE}  ¡Bienvenido a MinervaSQL! Usa el comando{Fore.GREEN} HELP {Fore.WHITE}para obtener ayuda epecifica en las instrucciones.
 {Fore.WHITE}                                                                                                         
@@ -48,10 +49,14 @@ def cargar_ayuda():
     except json.JSONDecodeError:
         print(f"{Fore.RED}Error: Archivo de ayuda mal formado{Style.RESET_ALL}")
         return {"comandos": {}}
+    
 help_data = cargar_ayuda()
 debug_mode = False
 db = Database()
-executor = Executor(db)
+usuario_actual = "root"  
+usuarios = UserManager("usuarios.json")
+executor = Executor(db, usuarios) 
+usuarios = UserManager()
 
 # Llenar base de datos con algunos datos iniciales
 db.tables["datos"] = [
@@ -94,6 +99,7 @@ while True:
         elif tokens[0][1] == "OTORGAR":
             parser = GrantParser(tokens)
             parsed_query = parser.parse()
+            usuarios.otorgar_permiso(parsed_query["usuario"], parsed_query["permiso"])
             if debug_mode:
                 print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
                 print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
@@ -170,6 +176,7 @@ while True:
         elif tokens[0][0] == "CREATE" and tokens[1][0] == "USER":
             parser = CreateUserParser(tokens)
             parsed_query = parser.parse()
+            usuarios.agregar_usuario(parsed_query["username"], parsed_query["password"])
             if debug_mode:
                 print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
                 print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
@@ -181,19 +188,18 @@ while True:
                 print(f"Resultado: {result}")
   
 
-        elif tokens[0][0] == "ELIMINAR" and tokens[1][0] == "USUARIO":
+        elif tokens[0][0] == "ELIMINAR" and tokens[1][0] == "USER":
             parser = EliminarUsuarioParser(tokens)
             parsed_query = parser.parse()
             if debug_mode:
                 print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
                 print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
-            result = executor.execute_eliminar_usuario(parsed_query["nombre"])
+            result = executor.execute_eliminar_usuario(parsed_query["nombre"], usuario_actual)
             if debug_mode:
                 print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             else:
                 print(f"Resultado: {result}")
-                print(result)
 
 
         elif tokens[0][0] == "DROP" and tokens[1][0] == "USER":

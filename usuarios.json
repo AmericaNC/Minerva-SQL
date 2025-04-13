@@ -1,0 +1,32 @@
+{
+  "root": {
+    "password": "rootpass",
+    "permisos": [
+      "crear_tabla",
+      "ver_usuarios",
+      "insertar",
+      "usar_base",
+      "crear_base",
+      "eliminar_usuario",
+      "otorgar",
+      "ver_bases",
+      "ver_tablas",
+      "crear_usuario",
+      "actualizar",
+      "contar",
+      "eliminar",
+      "eliminar_tablas"
+    ]
+  },
+  "america": {
+    "password": "1234",
+    "permisos": [
+      "crear_tabla",
+      "usar_base"
+    ]
+  },
+  "fernando": {
+    "password": "1234",
+    "permisos": []
+  }
+}

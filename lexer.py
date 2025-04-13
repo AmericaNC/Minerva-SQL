@@ -12,7 +12,6 @@ TOKEN_PATTERNS = [
     (r'\bVALORES\b', 'VALUES'),  
     (r'\bUSAR\b', 'USE'),
     (r'\bBASE\b', 'DATABASE'),
-    (r'\bCREAR\b', 'CREATE'),
     (r'\bBASES\b', 'DATABASES'),
     (r'\bMOSTRAR\b', 'SHOW'),
     (r'\bOTORGAR\b', 'GRANT'),

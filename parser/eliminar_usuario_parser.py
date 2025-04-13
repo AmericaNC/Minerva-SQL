@@ -4,10 +4,12 @@ class EliminarUsuarioParser:
         self.index = 0
 
     def parse(self):
-        self._expect("ELIMINAR")
-        self._expect("USER")  # <--- esto debe ser USER, no USUARIO
-        nombre = self._consume("IDENTIFIER")
-        return {"type": "ELIMINAR_USUARIO", "nombre": nombre}
+        if len(self.tokens) < 3:
+            raise Exception("Error de sintaxis en ELIMINAR USUARIO.")
+        if self.tokens[0][0] != "ELIMINAR" or self.tokens[1][0] != "USER" or self.tokens[2][0] != "IDENTIFIER":
+            raise Exception("Error de sintaxis en ELIMINAR USUARIO.")
+        return {"nombre": self.tokens[2][1]}
+
 
     def _expect(self, token_type):
         if self.tokens[self.index][0] != token_type:

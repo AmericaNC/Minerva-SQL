@@ -1,9 +1,11 @@
 from colorama import Fore, Style
+from user_manager import UserManager;
 import os
 
 class Executor:
-    def __init__(self, db):
+    def __init__(self, db, usuarios: UserManager):
         self.db = db
+        self.usuarios = usuarios
 
     def execute(self, parsed_query):
         if parsed_query["type"] == "SELECT":
@@ -29,44 +31,44 @@ class Executor:
         except Exception as e:
             return f"Error al eliminar base de datos: {str(e)}"
 
-
     def execute_create_user(self, username, password):
-        result = self.db.create_user(username, password)
-        return Fore.GREEN + result + Style.RESET_ALL
+        self.check_permission("crear_usuario")
+        self.usuarios.agregar_usuario(username, password)
+        return f"Usuario '{username}' creado."
+
 
     def execute_login(self, username, password):
-        if username in self.db.users and self.db.users[username] == password:
+        if self.usuarios.verificar_credenciales(username, password):
             self.db.current_user = username
             result = f"Sesión iniciada como '{username}'."
             return Fore.GREEN + result + Style.RESET_ALL
         else:
             raise ValueError("Usuario o contraseña incorrectos.")
 
-    
-    def execute_eliminar_usuario(self, username):
-        self.check_permission("eliminar_usuario")
-        if username not in self.db.users:
-            result = f"El usuario '{username}' no existe."
-            return Fore.RED + result + Style.RESET_ALL
-        del self.db.users[username]
-        result = f"Usuario '{username}' eliminado."
-        return Fore.GREEN + result + Style.RESET_ALL
-    
+    def execute_eliminar_usuario(self, nombre):
+        usuario_actual = self.db.current_user  # Obtener el usuario actual
+        permisos = self.usuarios.obtener_permisos(usuario_actual)
+        if "eliminar_usuario" not in permisos:
+            return "Error: Permiso 'eliminar_usuario' requerido."
+        if nombre == "root":
+            return "Error: No se puede eliminar el usuario root."
+        if nombre == usuario_actual:
+            return "Error: No puedes eliminar tu propio usuario mientras estás conectado."
+        if nombre not in self.usuarios.usuarios:
+            return f"Error: El usuario '{nombre}' no existe."
+        del self.usuarios.usuarios[nombre]
+        self.usuarios.guardar_usuarios()
+        return f"Usuario '{nombre}' eliminado correctamente."
+
     def execute_show_databases(self):
         self.check_permission("ver_bases")
         dbs = self.db.list_databases()
         return dbs  # ← Devuelve la lista real, no el string formateado
 
-    
     def execute_grant(self, permiso, usuario):
         self.check_permission("otorgar")
-        if usuario not in self.db.users:
-            raise ValueError(f"El usuario '{usuario}' no existe.")
-        if usuario not in self.db.permissions:
-            self.db.permissions[usuario] = set()
-        self.db.permissions[usuario].add(permiso)
-        result = f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
-        return Fore.GREEN + result + Style.RESET_ALL
+        self.usuarios.otorgar_permiso(usuario, permiso)  # ← ya persiste en el archivo
+        return f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
 
     def execute_show_tables(self):
         self.check_permission("ver_tablas")
@@ -95,21 +97,25 @@ class Executor:
        if db_name not in self.db.databases:
         raise ValueError(f"La base de datos '{db_name}' no existe.")
        self.db.current_db = db_name
+       self.db.tables = self.db.load_tables(db_name)
        result = f"Usando base de datos: {db_name}"
        return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_show_users(self):
-       self.check_permission("ver_usuarios")
-       if not self.db.users:
-        return "No hay usuarios registrados."
-       return "Usuarios: " + ", ".join(self.db.users.keys())
-    
+        self.check_permission("ver_usuarios")
+        lista = []
+        for nombre, info in self.usuarios.usuarios.items():
+            permisos = info.get("permisos", [])
+            permisos_str = ", ".join(permisos) if permisos else "Sin permisos"
+            lista.append(f"- {nombre} (Permisos: {permisos_str})")
+        return "Usuarios registrados:\n" + "\n".join(lista) if lista else "No hay usuarios registrados."
+
+
     def check_permission(self, permiso):
-        if self.db.current_user is None:
-            raise PermissionError("Debes iniciar sesión primero.")
-        user = self.db.current_user
-        if user not in self.db.permissions or permiso not in self.db.permissions[user]:
+        permisos = self.usuarios.obtener_permisos(self.db.current_user)
+        if permiso not in permisos:
             raise PermissionError(f"Permiso '{permiso}' requerido.")
+
 
     def execute_create_database(self, name):
         self.check_permission("crear_base")

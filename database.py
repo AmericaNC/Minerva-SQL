@@ -2,6 +2,24 @@ from pathlib import Path
 import os
 import json
 
+def check_condition(row, condition):
+        columna, operador, valor = condition
+        if operador == "=":
+            return row.get(columna) == valor
+        elif operador == "!=":
+            return row.get(columna) != valor
+        elif operador == ">":
+            return row.get(columna) > valor
+        elif operador == "<":
+            return row.get(columna) < valor
+        elif operador == ">=":
+            return row.get(columna) >= valor
+        elif operador == "<=":
+            return row.get(columna) <= valor
+        else:
+            raise ValueError(f"Operador no soportado: {operador}")
+
+
 class Database:
     def __init__(self):
         self.databases_path = Path("databases")
@@ -9,13 +27,13 @@ class Database:
         self.databases_path.mkdir(exist_ok=True)
         self.databases = {"default": {}}
         self.current_db = "default"
-        self.users = {"root": "rootpass"}
+        #self.users = {"root": "rootpass"}
         self.current_user = "root"  # ← login automático
-        self.permissions = {
-            "root": {"crear_tabla", "ver_usuarios", "insertar", "usar_base", "crear_base", 
-                     "eliminar_usuario", "otorgar", "ver_bases", "ver_tablas", 
-                     "actualizar", "contar", "eliminar", "eliminar_tablas"}
-        }
+        #self.permissions = {
+         #   "root": {"crear_tabla", "ver_usuarios", "insertar", "usar_base", "crear_base", 
+         #            "eliminar_usuario", "otorgar", "ver_bases", "ver_tablas", 
+         #            "actualizar", "contar", "eliminar", "eliminar_tablas"}
+        #}
 
         self.load_all_databases()
         # Si no hay bases, creamos 'default'
@@ -141,16 +159,13 @@ class Database:
         table = self.tables[table_name]
         initial_count = len(table)
         if where_clause:
-            column, operator, value = where_clause
-            table[:] = [row for row in table if not check_condition(row, column, operator, value)]
+            table[:] = [row for row in table if not check_condition(row, where_clause)]
             self.save_table(table_name)
         return initial_count - len(table)  # Número de filas eliminadas
     
     def create_table(self, table_name, columns):
         if table_name in self.tables:
             raise ValueError(f"La tabla '{table_name}' ya existe.")
-        
-        # Crear una tabla vacía con las columnas especificadas
         self.tables[table_name] = [{col: None for col in columns}]
         return f"Tabla '{table_name}' creada con columnas {columns}."
     
@@ -171,7 +186,7 @@ class Database:
             else:
                 count += 1
         return count
-
+    
 
     def update(self, table_name, column, value, where_clause):
         """Actualiza valores en la tabla especificada según la condición WHERE."""
@@ -179,10 +194,9 @@ class Database:
         if not table:
             print(f"Error: La tabla '{table_name}' no existe.")
             return 0
-        where_column, operator, where_value = where_clause
         updated_rows = 0
         for row in table:
-            if check_condition(row, where_column, operator, where_value):
+            if check_condition(row, where_clause):  # ✅ ¡Ahora correcto!
                 row[column] = value
                 updated_rows += 1
         self.save_table(table_name)
@@ -211,15 +225,5 @@ class Database:
             del self.databases[db_name]
         return True
 
-    def check_condition(row, column, operator, value):
-        row_value = row.get(column)
-        if operator == '=':
-            return row_value == value
-        elif operator == '>':
-            return row_value > value
-        elif operator == '<':
-            return row_value < value
-        else:
-            raise ValueError(f"Operador desconocido: {operator}")
 
 

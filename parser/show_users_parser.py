@@ -1,12 +1,8 @@
 class ShowUsersParser:
     def __init__(self, tokens):
         self.tokens = tokens
-        self.pos = 0
 
     def parse(self):
-        if self.tokens[self.pos][1] != "MOSTRAR":
-            raise SyntaxError("Se esperaba 'MOSTRAR'")
-        self.pos += 1
-        if self.tokens[self.pos][1] != "USUARIOS":
-            raise SyntaxError("Se esperaba 'USUARIOS'")
-        return {"action": "SHOW_USERS"}
+        if len(self.tokens) != 3 or self.tokens[0][1] != "MOSTRAR" or self.tokens[1][1] != "USUARIOS" or self.tokens[2][0] != "SEMICOLON":
+            raise SyntaxError("Sintaxis esperada: MOSTRAR USUARIOS;")
+        return {"type": "SHOW_USERS"}
