@@ -1,9 +1,14 @@
 {
     "comandos": {
         "SELECCIONA": {
-            "descripcion": "Consulta datos de una tabla",
+            "descripcion": "Consulta columnas especificas de una tabla",
             "sintaxis": "SELECCIONA [columnas] DESDE [tabla] [DONDE condición]",
             "ejemplo": "SELECCIONA HR, TEMP DESDE datos"
+        },
+        "SELECCIONA_TODOS": {
+            "descripcion": "Consulta todos los registros de una tabla",
+            "sintaxis": "SELECCIONA * DESDE [tabla] [DONDE condición]",
+            "ejemplo": "SELECCIONA * DESDE datos"
         },
         "INSERTAR": {
             "descripcion": "Inserta nuevos registros en una tabla",
@@ -21,13 +26,13 @@
             "ejemplo": "ELIMINAR DE datos DONDE HR EQ 90"
         },
         "DESHACER": {
-            "descripcion": "Elimina una tabla completa",
-            "sintaxis": "DESHACER TABLA [nombre_tabla]",
-            "ejemplo": "DESHACER TABLA datos"
+            "descripcion": "Elimina una tabla completa de forma logica en la base de datos",
+            "sintaxis": "DESHACER [nombre_tabla]",
+            "ejemplo": "DESHACER datos"
         },
         "CONTAR": {
-            "descripcion": "Cuenta registros en una tabla",
-            "sintaxis": "CONTAR DESDE [tabla] [DONDE condición]",
+            "descripcion": "Cuenta los registros en una tabla",
+            "sintaxis": "CONTAR DESDE [tabla]",
             "ejemplo": "CONTAR DESDE datos"
         },
         "CREAR": {
@@ -54,11 +59,6 @@
             "descripcion": "Inicia sesión con un usuario",
             "sintaxis": "LOGIN [usuario] PARA [contraseña]",
             "ejemplo": "LOGIN fernando PARA 1234"
-        },
-        "ELIMINAR_USUARIO": {
-            "descripcion": "Borra un usuario del sistema",
-            "sintaxis": "ELIMINAR USUARIO [nombre]",
-            "ejemplo": "ELIMINAR USUARIO fernando"
         },
         "MOSTRAR_BASES": {
             "descripcion": "Lista todas las bases de datos",
@@ -95,10 +95,29 @@
             "sintaxis": "MODO DEPURACION",
             "ejemplo": "MODO DEPURACION"
         },
+        "SALIR": {
+            "descripcion": "Permite salir de MinervaSQL",
+            "sintaxis": "SALIR",
+            "ejemplo": "SALIR"
+        },
         "HELP": {
             "descripcion": "Muestra este sistema de ayuda",
             "sintaxis": "HELP [comando]",
             "ejemplo": "HELP INSERTAR"
         }
+    },
+    "permisos": {
+        "crear_tabla": "Permite crear nuevas tablas",
+        "eliminar_tabla": "Permite eliminar tablas existentes",
+        "insertar": "Permite insertar datos en las tablas",
+        "ver_bases": "Permite visualizar las bases disponibles en el sistema.",
+        "otorgar": "Permite asignar permisos a otros usuarios",
+        "ver_tablas": "Permite observar las tablas disponibles",
+        "ver_usuarios": "Permite ver los usuarios de alta en el sistema",
+        "usar_base": "Permite seleccionar bases existentes",
+        "crear_bases": "Permite crear bases de datos",
+        "actualizar": "Permite actualizar registros existentes",
+        "contar": "Permite consultar la cantidad de registros en una tabla.",
+        "eliminar": "Permite borrar registros en base  de datos"
     }
 }

@@ -34,7 +34,6 @@ TOKEN_PATTERNS = [
     (r'\bLOGIN\b', 'LOGIN'),
     (r'\bUSUARIO\b', 'USUARIO'),
     (r'\bUSUARIOS\b', 'USUARIOS'),
-    #(r'\bDENTRO\b', 'IN'),
     (r'\bACTUALIZAR\b', 'ACTUALIZAR'),  
     (r'\bCREAR\b', 'CREATE'),
     (r'\bCON\b', 'SET'),

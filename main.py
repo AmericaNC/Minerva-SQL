@@ -33,8 +33,8 @@ ___      ___   __    _____  ___    _______   _______  ___      ___  __        __
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 {Fore.WHITE}🚀 {Fore.WHITE}MinervaSQL | {Fore.WHITE}Intérprete SQL en Español {Fore.YELLOW}v3.0{Fore.WHITE} | 
 {Fore.CYAN}────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-{Fore.WHITE}  ¡Bienvenido a MinervaSQL! Usa el comando{Fore.GREEN} HELP {Fore.WHITE}para obtener ayuda epecifica en las instrucciones.
-{Fore.WHITE}                                                                                                         
+{Fore.WHITE}  ¡Bienvenido a MinervaSQL! Usa el comando{Fore.GREEN} HELP {Fore.WHITE}para obtener ayuda epecifica en las instrucciones y
+{Fore.WHITE}  SALIR para terminar la sesion.                                                                                                      
 """
 print(welcome_message)
 
@@ -378,8 +378,13 @@ while True:
                 print(f"\n{Fore.YELLOW}Comandos disponibles:{Style.RESET_ALL}")
                 for cmd in help_data["comandos"]:
                     print(f"  {Fore.CYAN}{cmd.ljust(12)}{Style.RESET_ALL} - {help_data['comandos'][cmd]['descripcion']}")
-                print(f"\nUsa el comando {Fore.CYAN}MODO DEPURACION {Style.RESET_ALL} para depurar paso por paso cada instrucción. Consulta su funcionamiento con HELP MODO_DEPURACION\n")
-                print(f"\nUsa {Fore.GREEN}HELP [comando]{Style.RESET_ALL} para detalles específicos\n")
+                    # Nueva línea para mostrar permisos
+                print(f"\n{Fore.YELLOW}Permisos disponibles:{Style.RESET_ALL}")
+                for permiso, desc in help_data["permisos"].items():
+                    print(f"  {Fore.MAGENTA}{permiso.ljust(12)}{Style.RESET_ALL} - {desc}")
+        
+                print(f"\n  Usa el comando {Fore.CYAN}MODO DEPURACION {Style.RESET_ALL} para depurar paso por paso cada instrucción. Consulta su funcionamiento con HELP MODO_DEPURACION\n")
+                print(f"\n  Usa {Fore.GREEN}HELP [comando]{Style.RESET_ALL} para detalles específicos.\n")
             else:
         # Mostrar ayuda específica
                 cmd = tokens[1][1]
@@ -389,6 +394,12 @@ while True:
                     print(f"{Fore.CYAN}Descripción:{Style.RESET_ALL} {info['descripcion']}")
                     print(f"{Fore.CYAN}Sintaxis:{Style.RESET_ALL}    {info['sintaxis']}")
                     print(f"{Fore.CYAN}Ejemplo:{Style.RESET_ALL}     {info['ejemplo']}\n")
+
+                elif cmd == "PERMISOS":
+                    print(f"\n{Fore.YELLOW}PERMISOS DISPONIBLES:{Style.RESET_ALL}")
+                    for permiso, desc in help_data["permisos"].items():
+                        print(f"  {Fore.MAGENTA}{permiso.ljust(15)}{Style.RESET_ALL} - {desc}")
+                    print()
                 else:
                     print(f"{Fore.RED}Error: Comando '{cmd}' no reconocido{Style.RESET_ALL}")
 
