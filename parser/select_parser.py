@@ -24,12 +24,18 @@ class SelectParser:
     def parse(self):
         self.consume("SELECCIONA")  # Se espera la palabra clave SELECT
         columns = []
-        
-        # Leer las columnas seleccionadas
-        while self.tokens[self.position][0] == "IDENTIFIER":
+        if self.tokens[self.position][0] == "ASTERISK":
+            self.consume("ASTERISK")
+            columns = ["*"]
+        else:
+           while self.tokens[self.position][0] == "IDENTIFIER":
             columns.append(self.consume("IDENTIFIER"))
-            if self.tokens[self.position][0] == "COMMA":
+            if self.position < len(self.tokens) and self.tokens[self.position][0] == "COMMA":
                 self.consume("COMMA")
+            elif self.position < len(self.tokens) and self.tokens[self.position][0] == "DESDE":
+                break
+            else:
+                raise SyntaxError(f"Se esperaba ',' o 'DESDE', pero se encontró {self.tokens[self.position][0]}")
         
         self.consume("DESDE")  # Consumir la palabra 'DESDE'
         table_name = self.consume("IDENTIFIER")  # Obtener el nombre de la tabla

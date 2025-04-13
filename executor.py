@@ -19,7 +19,16 @@ class Executor:
 
     def execute(self, parsed_query):
         if parsed_query["type"] == "SELECT":
-            return self.db.select(parsed_query["table"], parsed_query["columns"], parsed_query["where"])
+            try:
+        # Ejecuta la selección sin preocuparse si es "*" o columnas específicas
+                return self.db.select(
+                    parsed_query["table"],
+                    parsed_query["columns"],
+                    parsed_query.get("where")
+                )
+            except Exception as e:
+                return f"Error: {e}"
+
         elif parsed_query["type"] == "INSERT":
             return self.execute_insert(parsed_query["table"], parsed_query["values"])
         elif parsed_query["type"] == "CURRENT_USER":

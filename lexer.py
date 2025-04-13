@@ -47,6 +47,7 @@ TOKEN_PATTERNS = [
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+\.\d+', 'FLOAT'),
     (r'\d+', 'NUMBER'),  # Asegura que los valores flotantes también se manejen
+    (r"\*", "ASTERISK"),
     (r'>', 'GT'),
     (r'<', 'LT'),
     (r'=', 'EQ'),

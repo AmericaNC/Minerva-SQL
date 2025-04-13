@@ -149,6 +149,10 @@ class Database:
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")
         table = self.tables[table_name]
+        if columns == ["*"]:
+            if not table:
+                return "La tabla está vacía."
+            columns = list(table[0].keys())
         results = []
         for row in table:
             if where_clause:
