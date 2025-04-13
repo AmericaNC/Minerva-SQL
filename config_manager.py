@@ -1,3 +1,14 @@
+"""
+  ___      ___   __    _____  ___    _______  
+ |"  \    /"  | |" \  (\"   \|"  \  /"     "| 
+  \   \  //   | ||  | |.\\   \    |(: ______) 
+  /\\  \/.    | |:  | |: \.   \\  | \/    |   
+ |: \.        | |.  | |.  \    \. | // ___)_  
+ |.  \    /:  | /\  |\|    \    \ |(:      "| 
+ |___|\__/|___|(__\_|_)\___|\____\) \_______)
+ 
+ MinervaSQL - Intérprete SQL en Español v1.0
+"""
 import json
 from pathlib import Path
 from colorama import Fore, Style

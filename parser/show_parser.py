@@ -1,4 +1,14 @@
-# parser/show_parser.py
+"""
+  ___      ___   __    _____  ___    _______  
+ |"  \    /"  | |" \  (\"   \|"  \  /"     "| 
+  \   \  //   | ||  | |.\\   \    |(: ______) 
+  /\\  \/.    | |:  | |: \.   \\  | \/    |   
+ |: \.        | |.  | |.  \    \. | // ___)_  
+ |.  \    /:  | /\  |\|    \    \ |(:      "| 
+ |___|\__/|___|(__\_|_)\___|\____\) \_______)
+ 
+ MinervaSQL - Intérprete SQL en Español v1.0
+"""
 class ShowDatabasesParser:
     def __init__(self, tokens):
         self.tokens = tokens
