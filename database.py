@@ -1,14 +1,13 @@
-"""
-  ___      ___   __    _____  ___    _______  
- |"  \    /"  | |" \  (\"   \|"  \  /"     "| 
-  \   \  //   | ||  | |.\\   \    |(: ______) 
-  /\\  \/.    | |:  | |: \.   \\  | \/    |   
- |: \.        | |.  | |.  \    \. | // ___)_  
- |.  \    /:  | /\  |\|    \    \ |(:      "| 
- |___|\__/|___|(__\_|_)\___|\____\) \_______)
- 
- MinervaSQL - Intérprete SQL en Español v1.0
-"""
+#  ___      ___   __    _____  ___    _______  
+# |"  \    /"  | |" \  (\"   \|"  \  /"     "| 
+#  \   \  //   | ||  | |.\\   \    |(: ______) 
+#  /\\  \/.    | |:  | |: \.   \\  | \/    |   
+# |: \.        | |.  | |.  \    \. | // ___)_  
+# |.  \    /:  | /\  |\|    \    \ |(:      "| 
+# |___|\__/|___|(__\_|_)\___|\____\) \_______)
+# 
+# MinervaSQL - Intérprete SQL en Español v1.0
+
 from pathlib import Path
 import os
 import json
@@ -147,7 +146,7 @@ class Database:
         return f"Datos insertados en '{table_name}': {new_row}"
 
     def select(self, table_name, columns, where_clause=None):
-        """Consulta datos de la tabla especificada."""
+        """Consulta datos de la tabla especificada y los devuelve en formato de tabla."""
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")
         table = self.tables[table_name]
@@ -162,8 +161,24 @@ class Database:
                 if operator == "EQ" and not (row[column] == value):
                     continue
             results.append({col: row[col] for col in columns})
-        return results
-    
+        if not results:
+            return "No se encontraron resultados"
+        col_widths = {}
+        for col in columns:
+            col_widths[col] = max(len(str(col)), max(len(str(row[col])) for row in results))
+        border = "+" + "+".join(["-" * (width + 2) for width in col_widths.values()]) + "+"
+        table_str = f"\n{border}\n"
+        table_str += "|" + "|".join([f" {col.center(col_widths[col])} " for col in columns]) + "|\n"
+        table_str += border + "\n"
+        for row in results:
+            row_str = "|"
+            for col in columns:
+                row_str += f" {str(row[col]).ljust(col_widths[col])} |"
+            table_str += row_str + "\n"
+        table_str += border
+        return table_str
+
+
     def delete(self, table_name, where_clause):
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")
