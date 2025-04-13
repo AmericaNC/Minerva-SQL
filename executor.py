@@ -73,7 +73,7 @@ class Executor:
     def execute_show_databases(self):
         self.check_permission("ver_bases")
         dbs = self.db.list_databases()
-        return dbs  # ← Devuelve la lista real, no el string formateado
+        return dbs  
 
     def execute_grant(self, permiso, usuario):
         self.check_permission("otorgar")
@@ -86,7 +86,6 @@ class Executor:
         self.db.databases[current_db] = self.db.load_tables(current_db)  # << Esta línea es clave
         return list(self.db.databases[current_db].keys())
 
-    
     def execute_show_tables_in(self, db_name):
         self.check_permission("ver_tablas")
         if db_name not in self.db.databases:
@@ -120,12 +119,10 @@ class Executor:
             lista.append(f"- {nombre} (Permisos: {permisos_str})")
         return "Usuarios registrados:\n" + "\n".join(lista) if lista else "No hay usuarios registrados."
 
-
     def check_permission(self, permiso):
         permisos = self.usuarios.obtener_permisos(self.db.current_user)
         if permiso not in permisos:
             raise PermissionError(f"Permiso '{permiso}' requerido.")
-
 
     def execute_create_database(self, name):
         self.check_permission("crear_base")

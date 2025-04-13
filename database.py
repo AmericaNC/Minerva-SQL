@@ -106,7 +106,6 @@ class Database:
             return True
         else:
             return False
-
     
     def create_user(self, username, password):
         if username in self.users:
@@ -222,7 +221,7 @@ class Database:
             return 0
         updated_rows = 0
         for row in table:
-            if check_condition(row, where_clause):  # ✅ ¡Ahora correcto!
+            if check_condition(row, where_clause): 
                 row[column] = value
                 updated_rows += 1
         self.save_table(table_name)
