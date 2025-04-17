@@ -38,17 +38,28 @@ ___      ___   __    _____  ___    _______   _______  ___      ___  __        __
 """
 print(welcome_message)
 
+def resource_path(relative_path):
+    """ Obtiene la ruta absoluta al recurso, sin importar si se ejecuta como script o como ejecutable """
+    try:
+        # PyInstaller crea una carpeta temporal y guarda el path ahí
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 def cargar_ayuda():
     try:
-        with open('help_docs.json', 'r', encoding='utf-8') as f:
+        ruta = resource_path('help_docs.json')
+        with open(ruta, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"{Fore.RED}Error: Archivo de ayuda no encontrado{Style.RESET_ALL}")
-        return {"comandos": {}}
+        return {"comandos": {}, "permisos": {}}
     except json.JSONDecodeError:
         print(f"{Fore.RED}Error: Archivo de ayuda mal formado{Style.RESET_ALL}")
-        return {"comandos": {}}
-    
+        return {"comandos": {}, "permisos": {}}
+
 help_data = cargar_ayuda()
 debug_mode = False
 db = Database()
