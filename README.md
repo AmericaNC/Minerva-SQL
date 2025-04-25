@@ -199,21 +199,36 @@ TOKEN_PATTERNS = [
 Interprete basado en SQL Español.
 Algunas reglas y aspectos relevantes:
 
-- Las consultas como promedio, suma, entre otras, se realizan por Medio de codigo externo.
-- Los tipos de datos en insersion son de tipo FLOAT, INT y STRING.
-- La eliminacion de usuarios se maneja desde el archivo de control.
-- Los archivos de base de datos estan en la carpeta **database**.
-- Los archivos de base de datos se generan con extensión JSON.
-- El gestor tiene su propio motor de depuración.
-- El usuario root no se puede borrar.
-- El usuario root se carga con el primer inicio de sesion, después pueden crearse usuarios loguearse.
-- El usuario root es administrador y tiene todos los permisos disponibles.
-- El ";"es opcional en la mayoria de instrucciones, solo necesario cuando hay una instruccioque tiene - la ntencion de perdurar.
-- El motor es sensible a mayusculas y minusculas.
-- Todas las palabras reservadas se escribiran en mayusculas.
-- El modo de depuración se activa y desactiva con la misma instrucción (MODO DEPURACION)
-- El modo de depuración explica en texto plano el debbugin.
-- No pueden revocarse permisos, seria neceario modificarlos desde JSON
+1. Consultas Avanzadas
+ - Las operaciones como PROMEDIO, SUMA y otras funciones de agregación se gestionan a través de código externo al motor del gestor. Esto permite una mayor modularidad y flexibilidad en la implementación de funciones avanzadas.
+
+2. Tipos de Datos Admitidos
+ - Durante las operaciones de inserción, los tipos de datos reconocidos por el sistema son los siguientes:
+FLOAT, INT, STRING
+
+3. Gestión de Usuarios
+ - La eliminación de usuarios no se realiza mediante comandos directos en el sistema. Esta debe efectuarse manualmente desde el archivo de control correspondiente.
+ - El usuario root es generado automáticamente al realizar el primer inicio de sesión del sistema.
+ - El usuario root no puede ser eliminado bajo ninguna circunstancia.
+ - Este usuario posee privilegios administrativos y tiene asignados todos los permisos disponibles en el sistema.
+
+4. Estructura de Archivos
+ - Todos los archivos de base de datos se almacenan en el directorio denominado database.
+ - Las bases de datos son generadas y gestionadas utilizando el formato de archivo con extensión .json.
+
+5. Depuración del Sistema
+ - El gestor incorpora un motor de depuración propio, accesible mediante la instrucción MODO DEPURACION.
+ - Esta instrucción actúa como un interruptor, es decir, activa o desactiva el modo de depuración en función del estado actual del sistema.
+ - El modo de depuración proporciona explicaciones detalladas en texto plano, facilitando el rastreo de errores y el análisis de comportamiento interno del gestor.
+
+6. Reglas del Lenguaje
+ - El sistema es sensible a mayúsculas y minúsculas (case-sensitive), tanto en nombres de entidades como en comandos.
+ - Todas las palabras reservadas deben ser escritas exclusivamente en mayúsculas.
+ - El uso del carácter ; al final de las instrucciones es opcional. Sin embargo, se recomienda su uso en aquellos comandos que estén destinados a mantener un estado persistente o que se ejecuten de forma secuencial.
+
+7. Gestión de Permisos
+ - No existe una instrucción específica para revocar permisos a un usuario.
+ - La única manera de modificar los permisos asignados es directamente desde el archivo de configuración .json correspondiente al sistema.
 
 ## Respaldos cifrados SSH 
 El proceso para crear respaldos de las bases de datos es el siguiente.
