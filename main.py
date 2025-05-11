@@ -17,6 +17,7 @@ from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
 import json
+import sys
 import os
 from pathlib import Path
 from colorama import init, Fore,  Style
