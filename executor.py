@@ -128,10 +128,6 @@ class Executor:
         dbs = self.db.list_databases()
         return dbs  
 
-    #def execute_grant(self, permiso, usuario):
-    #    self.check_permission("otorgar")
-    #    self.usuarios.otorgar_permiso(usuario, permiso)  # ← ya persiste en el archivo
-    #    return f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
     def execute_grant(self, permiso, usuario):
         self.check_permission("otorgar")
         def accion(p, u):
@@ -154,32 +150,17 @@ class Executor:
         if db_name not in self.db.databases:
           raise ValueError(f"La base de datos '{db_name}' no existe.")
         return list(self.db.databases[db_name].keys())
-
-    #def execute_insert(self, table_name, values, columns):
-    #    self.check_permission("insertar")
-    #    if table_name not in self.db.tables:
-    #        raise ValueError(f"Tabla '{table_name}' no existe")
-    #    entry = dict(zip(columns, values))
-    #    self.db.tables[table_name].append(entry)
-    #    self.db.save_table(table_name)  # 💾 Guardar automáticamente
-    #    return f"Insertado en {table_name}: {entry}"
+    
     def execute_insert(self, tabla, valores, columnas=None):
         self.check_permission("insertar")
-
-    # Definir acción que se ejecutará al COMMIT
         def accion(table_name, values, cols):
-            self.db.insert(table_name, values, cols)  # Ejecuta insert real
-
+            self.db.insert(table_name, values, cols) 
         if self.en_transaccion:
-            # Guardar copias para evitar mutaciones
             self.cambios_pendientes.append((accion, (tabla, valores.copy(), columnas.copy() if columnas else None)))
             return f"INSERT en {tabla} registrado en transacción."
         else:
-            # Insert inmediato fuera de transacción
             return self.db.insert(tabla, valores, columnas)
 
-
-        
     def execute_use(self, db_name):
        self.check_permission("usar_base")
        if db_name not in self.db.databases:
@@ -199,26 +180,55 @@ class Executor:
         return "Usuarios registrados:\n" + "\n".join(lista) if lista else "No hay usuarios registrados."
     
     def execute_revoke(self, permiso, usuario):
-        self.check_permission("otorgar")  # solo quien puede otorgar, puede revocar
-        if not self.usuarios.revocar_permiso(usuario, permiso):
-            return f"El usuario '{usuario}' no tenía el permiso '{permiso}'."
-        return f"Permiso '{permiso}' revocado al usuario '{usuario}'."
+        self.check_permission("otorgar")
+        def accion(p, u):
+            self.usuarios.revocar_permiso(u, p)
+        if self.en_transaccion:
+            self.cambios_pendientes.append((accion, (permiso, usuario)))
+            return f"REVOKE '{permiso}' de '{usuario}' registrado en transacción."
+        else:
+            if not self.usuarios.revocar_permiso(usuario, permiso):
+                return f"El usuario '{usuario}' no tenía el permiso '{permiso}'."
+            return f"Permiso '{permiso}' revocado al usuario '{usuario}'."
 
     def check_permission(self, permiso):
         permisos = self.usuarios.obtener_permisos(self.db.current_user)
         if permiso not in permisos:
             raise PermissionError(f"Permiso '{permiso}' requerido.")
 
+    #def execute_create_database(self, name):
+    #    self.check_permission("crear_base")
+    #    if name in self.db.databases:
+    #        result = f"La base de datos '{name}' ya existe."
+    #        return Fore.RED + result + Style.RESET_ALL
+    #    self.db.databases[name] = {}
+    #    db_folder = self.db.databases_path / name
+    #    db_folder.mkdir(exist_ok=True)
+    #    result = f"Base de datos '{name}' creada exitosamente."
+    #    return Fore.GREEN + result + Style.RESET_ALL
     def execute_create_database(self, name):
         self.check_permission("crear_base")
-        if name in self.db.databases:
-            result = f"La base de datos '{name}' ya existe."
-            return Fore.RED + result + Style.RESET_ALL
-        self.db.databases[name] = {}
-        db_folder = self.db.databases_path / name
-        db_folder.mkdir(exist_ok=True)
-        result = f"Base de datos '{name}' creada exitosamente."
-        return Fore.GREEN + result + Style.RESET_ALL
+
+    # Acción diferida para COMMIT
+        def accion(nombre):
+            if nombre in self.db.databases:
+                raise RuntimeError(f"La base de datos '{nombre}' ya existe.")  # si ya existe al commit, error
+            self.db.databases[nombre] = {}
+            db_folder = self.db.databases_path / nombre
+            db_folder.mkdir(exist_ok=True)
+
+        if self.en_transaccion:
+            self.cambios_pendientes.append((accion, (name,)))
+            return f"CREATE DATABASE '{name}' registrado en transacción."
+        else:
+            if name in self.db.databases:
+                result = f"La base de datos '{name}' ya existe."
+                return Fore.RED + result + Style.RESET_ALL
+            self.db.databases[name] = {}
+            db_folder = self.db.databases_path / name
+            db_folder.mkdir(exist_ok=True)
+            result = f"Base de datos '{name}' creada exitosamente."
+            return Fore.GREEN + result + Style.RESET_ALL
 
     def execute_update(self, table_name, column, value, where_clause):
         self.check_permission("actualizar")
