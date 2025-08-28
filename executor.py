@@ -86,10 +86,6 @@ class Executor:
             except Exception as e:
                 return f"Error al eliminar base de datos: {str(e)}"
 
-    #def execute_create_user(self, username, password):
-    #    self.check_permission("crear_usuario")
-    #    self.usuarios.agregar_usuario(username, password)
-    #    return f"Usuario '{username}' creado."
     def execute_create_user(self, username, password):
         self.check_permission("crear_usuario")
         def accion(u, p):
@@ -132,10 +128,20 @@ class Executor:
         dbs = self.db.list_databases()
         return dbs  
 
+    #def execute_grant(self, permiso, usuario):
+    #    self.check_permission("otorgar")
+    #    self.usuarios.otorgar_permiso(usuario, permiso)  # ← ya persiste en el archivo
+    #    return f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
     def execute_grant(self, permiso, usuario):
         self.check_permission("otorgar")
-        self.usuarios.otorgar_permiso(usuario, permiso)  # ← ya persiste en el archivo
-        return f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
+        def accion(p, u):
+            self.usuarios.otorgar_permiso(u, p)
+        if self.en_transaccion:
+            self.cambios_pendientes.append((accion, (permiso, usuario)))
+            return f"GRANT '{permiso}' a '{usuario}' registrado en transacción."
+        else:
+            self.usuarios.otorgar_permiso(usuario, permiso)
+            return f"Permiso '{permiso}' otorgado al usuario '{usuario}'."
 
     def execute_show_tables(self):
         self.check_permission("ver_tablas")

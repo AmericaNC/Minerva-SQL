@@ -34,6 +34,9 @@
   },
   "ALBERTO": {
     "password": "1254",
-    "permisos": []
+    "permisos": [
+      "ver_bases",
+      "usar_base"
+    ]
   }
 }
