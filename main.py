@@ -16,6 +16,8 @@ from user_manager import UserManager
 from parser.drop_parser import DropParser
 from executor import Executor
 from database import Database
+from parser.transaction_parse import TransactionParser
+from parser.revoke_parser import RevokeParser
 import json
 import sys
 import os
@@ -198,6 +200,8 @@ while True:
             else:
                 print(f"Resultado: {result}")
   
+       
+
 
         elif tokens[0][0] == "ELIMINAR" and tokens[1][0] == "USER":
             parser = EliminarUsuarioParser(tokens)
@@ -211,6 +215,9 @@ while True:
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             else:
                 print(f"Resultado: {result}")
+        
+      
+
 
 
         elif tokens[0][0] == "DROP" and tokens[1][0] == "USER":
@@ -383,6 +390,28 @@ while True:
             result = executor.execute_count(parsed_query["table"], parsed_query["where"])
             print(f"Resultado: {result}")
         
+        elif tokens[0][1] == "REVOCAR":
+            parser = RevokeParser(tokens)
+            parsed_query = parser.parse()
+            result = executor.execute_revoke(parsed_query["permiso"], parsed_query["usuario"])
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(result)
+
+        elif tokens[0][1] in ["BEGIN", "COMMIT", "ROLLBACK"]:
+            parser = TransactionParser(tokens)
+            parsed_query = parser.parse()
+            if parsed_query["type"] == "BEGIN":
+                result = executor.begin()
+            elif parsed_query["type"] == "COMMIT":
+                result = executor.commit()
+            elif parsed_query["type"] == "ROLLBACK":
+                result = executor.rollback()
+            print(result)
 
         elif tokens[0][1] == "HELP":
             if len(tokens) == 1:
@@ -398,6 +427,7 @@ while True:
                 print(f"\n  Usa el comando {Fore.CYAN}MODO DEPURACION {Style.RESET_ALL} para depurar paso por paso cada instrucción. Consulta su funcionamiento con HELP MODO_DEPURACION\n")
                 print(f"\n  Usa {Fore.GREEN}HELP [comando]{Style.RESET_ALL} para detalles específicos.\n")
             else:
+                
         # Mostrar ayuda específica
                 cmd = tokens[1][1]
                 if cmd in help_data["comandos"]:

@@ -128,21 +128,49 @@ class Database:
         return f"Usuario '{nombre}' eliminado correctamente."
 
 
+   # def insert(self, table_name, values, columns=None):
+       # if table_name not in self.tables:
+            #raise ValueError(f"La tabla '{table_name}' no existe.")
+        #table_columns = list(self.tables[table_name][0].keys())
+       # if columns:
+           # if set(columns) - set(table_columns):
+               # raise ValueError(f"Columnas inválidas: {set(columns) - set(table_columns)}")
+       # else:
+           # columns = table_columns  # Si no se especifican columnas, usamos todas en orden
+       # if len(columns) != len(values):
+            #raise ValueError("El número de valores no coincide con el número de columnas.")
+       # new_row = {col: val for col, val in zip(columns, values)}
+       # self.tables[table_name].append(new_row)
+       # self.save_table(table_name)
+       # return f"Datos insertados en '{table_name}': {new_row}"
+
     def insert(self, table_name, values, columns=None):
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")
-        table_columns = list(self.tables[table_name][0].keys())
+    
+    # Si la tabla está vacía, usamos las columnas proporcionadas
+        if self.tables[table_name]:
+            table_columns = list(self.tables[table_name][0].keys())
+        elif columns:
+            table_columns = columns
+        else:
+            raise ValueError("No se puede inferir columnas de tabla vacía. Especifica columnas.")
+
         if columns:
             if set(columns) - set(table_columns):
                 raise ValueError(f"Columnas inválidas: {set(columns) - set(table_columns)}")
         else:
-            columns = table_columns  # Si no se especifican columnas, usamos todas en orden
+            columns = table_columns
+
         if len(columns) != len(values):
             raise ValueError("El número de valores no coincide con el número de columnas.")
+
         new_row = {col: val for col, val in zip(columns, values)}
         self.tables[table_name].append(new_row)
         self.save_table(table_name)
         return f"Datos insertados en '{table_name}': {new_row}"
+
+
 
     def select(self, table_name, columns, where_clause=None):
         """Consulta datos de la tabla especificada y los devuelve en formato de tabla."""
@@ -192,12 +220,19 @@ class Database:
             self.save_table(table_name)
         return initial_count - len(table)  # Número de filas eliminadas
     
+    #def create_table(self, table_name, columns):
+        #if table_name in self.tables:
+           # raise ValueError(f"La tabla '{table_name}' ya existe.")
+        #self.tables[table_name] = [{col: None for col in columns}]
+        #return f"Tabla '{table_name}' creada con columnas {columns}."
     def create_table(self, table_name, columns):
         if table_name in self.tables:
             raise ValueError(f"La tabla '{table_name}' ya existe.")
-        self.tables[table_name] = [{col: None for col in columns}]
-        return f"Tabla '{table_name}' creada con columnas {columns}."
-    
+        self.tables[table_name] = {
+            "columnas": columns,
+            "filas": []
+        }
+
     def count(self, table_name, where_clause=None):
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")

@@ -6,14 +6,14 @@ CARPETA_DATABASES="./databases"
 # Argumentos
 USUARIO_DESTINO="$1"
 RUTA_REMOTA="$2"
-HOST="${3:-localhost}"
-PUERTO="${4:-5000}"
-LLAVE_PRIVADA="${5:-~/.ssh/id_rsa}"
-BASE_ESPECIFICA="$6"  # Nombre de la base específica (opcional)
+HOST="$3"                     # Ahora obligatorio, debe ser la IP de Tailscale
+PUERTO="${4:-5000}"             # Puerto opcional, por defecto 22
+BASE_ESPECIFICA="$5"          # Nombre de la base específica (opcional)
+LLAVE_PRIVADA="$HOME/.ssh/id_rsa"  # Usar llave por defecto sin pasarla por argumento
 
 # Verifica que se pasaron los argumentos necesarios
-if [ -z "$USUARIO_DESTINO" ] || [ -z "$RUTA_REMOTA" ]; then
-  echo "Uso: $0 usuario_destino ruta_remota [host] [puerto] [llave_ssh] [base_especifica]"
+if [ -z "$USUARIO_DESTINO" ] || [ -z "$RUTA_REMOTA" ] || [ -z "$HOST" ]; then
+  echo "Uso: $0 usuario_destino ruta_remota host [puerto] [base_especifica]"
   exit 1
 fi
 
@@ -37,7 +37,7 @@ for BASE in "${BASES[@]}"; do
     echo "🔐 Cifrando $ARCHIVO_TEMP"
     gpg --batch --yes --symmetric --cipher-algo AES256 "$ARCHIVO_TEMP"
 
-    echo "🚀 Enviando $ARCHIVO_CIFRADO a $USUARIO_DESTINO@$HOST:$RUTA_REMOTA usando llave $LLAVE_PRIVADA"
+    echo "🚀 Enviando $ARCHIVO_CIFRADO a $USUARIO_DESTINO@$HOST:$RUTA_REMOTA usando llave por defecto"
     scp -i "$LLAVE_PRIVADA" -P "$PUERTO" "$ARCHIVO_CIFRADO" "$USUARIO_DESTINO@$HOST:$RUTA_REMOTA"
 
     echo "🧹 Limpiando archivos temporales"
@@ -45,6 +45,6 @@ for BASE in "${BASES[@]}"; do
 
     echo "✅ Base $NOMBRE_BASE procesada."
   else
-    echo "⚠️ La base '$BASE_ESPECIFICA' no existe en $CARPETA_DATABASES"
+    echo "⚠ La base '$BASE_ESPECIFICA' no existe en $CARPETA_DATABASES"
   fi
 done

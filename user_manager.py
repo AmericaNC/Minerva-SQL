@@ -53,6 +53,15 @@ class UserManager:
             self.usuarios[nombre]["permisos"].append(permiso)
             self.guardar_usuarios()
 
+    def revocar_permiso(self, usuario, permiso):
+        if usuario not in self.usuarios:
+            raise ValueError(f"El usuario '{usuario}' no existe.")
+        if permiso in self.usuarios[usuario]["permisos"]:
+            self.usuarios[usuario]["permisos"].remove(permiso)
+            self.guardar_usuarios()
+            return True
+        return False
+
     def verificar_credenciales(self, nombre, password):
         return (
             nombre in self.usuarios and

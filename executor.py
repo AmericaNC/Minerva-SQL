@@ -16,6 +16,34 @@ class Executor:
     def __init__(self, db, usuarios: UserManager):
         self.db = db
         self.usuarios = usuarios
+        self.en_transaccion = False
+        self.cambios_pendientes = []
+
+    def begin(self):
+        if self.en_transaccion:
+            return "Ya hay una transacción activa."
+        self.en_transaccion = True
+        self.cambios_pendientes = []
+        return "Transacción iniciada."
+
+    def commit(self):
+        if not self.en_transaccion:
+            return "No hay transacción activa."
+        for accion, args in self.cambios_pendientes:
+            accion(*args)  # Ejecuta el insert real
+        self.en_transaccion = False
+        self.cambios_pendientes.clear()
+        return "Transacción confirmada (COMMIT)."
+
+
+    def rollback(self):
+        if not self.en_transaccion:
+            return "No hay transacción activa."
+    
+        self.cambios_pendientes.clear()
+        self.en_transaccion = False
+        return "Transacción cancelada (ROLLBACK)."
+
 
     def execute(self, parsed_query):
         if parsed_query["type"] == "SELECT":
@@ -101,15 +129,31 @@ class Executor:
           raise ValueError(f"La base de datos '{db_name}' no existe.")
         return list(self.db.databases[db_name].keys())
 
-    def execute_insert(self, table_name, values, columns):
+    #def execute_insert(self, table_name, values, columns):
+    #    self.check_permission("insertar")
+    #    if table_name not in self.db.tables:
+    #        raise ValueError(f"Tabla '{table_name}' no existe")
+    #    entry = dict(zip(columns, values))
+    #    self.db.tables[table_name].append(entry)
+    #    self.db.save_table(table_name)  # 💾 Guardar automáticamente
+    #    return f"Insertado en {table_name}: {entry}"
+    def execute_insert(self, tabla, valores, columnas=None):
         self.check_permission("insertar")
-        if table_name not in self.db.tables:
-            raise ValueError(f"Tabla '{table_name}' no existe")
-        entry = dict(zip(columns, values))
-        self.db.tables[table_name].append(entry)
-        self.db.save_table(table_name)  # 💾 Guardar automáticamente
-        return f"Insertado en {table_name}: {entry}"
 
+    # Definir acción que se ejecutará al COMMIT
+        def accion(table_name, values, cols):
+            self.db.insert(table_name, values, cols)  # Ejecuta insert real
+
+        if self.en_transaccion:
+            # Guardar copias para evitar mutaciones
+            self.cambios_pendientes.append((accion, (tabla, valores.copy(), columnas.copy() if columnas else None)))
+            return f"INSERT en {tabla} registrado en transacción."
+        else:
+            # Insert inmediato fuera de transacción
+            return self.db.insert(tabla, valores, columnas)
+
+
+        
     def execute_use(self, db_name):
        self.check_permission("usar_base")
        if db_name not in self.db.databases:
@@ -127,6 +171,12 @@ class Executor:
             permisos_str = ", ".join(permisos) if permisos else "Sin permisos"
             lista.append(f"- {nombre} (Permisos: {permisos_str})")
         return "Usuarios registrados:\n" + "\n".join(lista) if lista else "No hay usuarios registrados."
+    
+    def execute_revoke(self, permiso, usuario):
+        self.check_permission("otorgar")  # solo quien puede otorgar, puede revocar
+        if not self.usuarios.revocar_permiso(usuario, permiso):
+            return f"El usuario '{usuario}' no tenía el permiso '{permiso}'."
+        return f"Permiso '{permiso}' revocado al usuario '{usuario}'."
 
     def check_permission(self, permiso):
         permisos = self.usuarios.obtener_permisos(self.db.current_user)
@@ -173,6 +223,22 @@ class Executor:
         self.db.save_table(table_name)  # 💾 Guardar la nueva tabla
         result = f"Tabla '{table_name}' creada con columnas {columns}."
         return Fore.GREEN + result + Style.RESET_ALL
+    
+    def execute_mostrar_tablas(self):
+        db_name = self.db.current_db
+        tablas = list(self.db.tables.keys())
+        return f"Tablas en la base '{db_name}': {tablas}"
+
+    def execute_describe(self, table_name):
+        if table_name not in self.db.tables:
+            return f"Error: La tabla '{table_name}' no existe."
+    
+        table_columns = list(self.db.tables[table_name][0].keys()) if self.db.tables[table_name] else []
+        num_rows = len(self.db.tables[table_name])
+    
+    # Resultado visual
+        result = f"Tabla '{table_name}':\nColumnas: {table_columns}\nFilas: {num_rows}"
+        return result
 
     def execute_drop_table(self, table_name):
         self.check_permission("eliminar")

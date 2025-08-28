@@ -21,7 +21,6 @@
   "america": {
     "password": "1234",
     "permisos": [
-      "crear_tabla",
       "usar_base"
     ]
   },
