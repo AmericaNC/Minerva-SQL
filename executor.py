@@ -68,15 +68,33 @@ class Executor:
         result = f"Base de datos actual: {self.db.current_db}"
         return Fore.GREEN + result + Style.RESET_ALL
     
+    #def execute_drop_database(self, db_name):
+    #    self.check_permission("eliminar")
+    #    if db_name == self.db.current_db:
+    #        return "No se puede eliminar la base de datos actualmente en uso."
+    #    try:
+    #        self.db.drop_database(db_name)
+    #        return f"Base de datos '{db_name}' eliminada correctamente."
+    #    except Exception as e:
+    #        return f"Error al eliminar base de datos: {str(e)}"
+
     def execute_drop_database(self, db_name):
         self.check_permission("eliminar")
         if db_name == self.db.current_db:
             return "No se puede eliminar la base de datos actualmente en uso."
-        try:
-            self.db.drop_database(db_name)
-            return f"Base de datos '{db_name}' eliminada correctamente."
-        except Exception as e:
-            return f"Error al eliminar base de datos: {str(e)}"
+        def accion(nombre):
+            self.db.drop_database(nombre)
+
+        if self.en_transaccion:
+        # Guardar en la lista de cambios pendientes
+            self.cambios_pendientes.append((accion, (db_name,)))
+            return f"DROP DATABASE '{db_name}' registrado en transacción."
+        else:
+            try:
+                self.db.drop_database(db_name)
+                return f"Base de datos '{db_name}' eliminada correctamente."
+            except Exception as e:
+                return f"Error al eliminar base de datos: {str(e)}"
 
     def execute_create_user(self, username, password):
         self.check_permission("crear_usuario")
