@@ -230,11 +230,27 @@ class Executor:
             result = f"Base de datos '{name}' creada exitosamente."
             return Fore.GREEN + result + Style.RESET_ALL
 
+    #def execute_update(self, table_name, column, value, where_clause):
+    #    self.check_permission("actualizar")
+    #    resultado = self.db.update(table_name, column, value, where_clause)
+    #    self.db.save_table(table_name)  # 💾 Guardar cambios
+    #    return f"Filas actualizadas: {resultado}"
     def execute_update(self, table_name, column, value, where_clause):
         self.check_permission("actualizar")
-        resultado = self.db.update(table_name, column, value, where_clause)
-        self.db.save_table(table_name)  # 💾 Guardar cambios
-        return f"Filas actualizadas: {resultado}"
+
+    # Acción diferida para COMMIT
+        def accion(tn, col, val, wc):
+            resultado = self.db.update(tn, col, val, wc)
+            self.db.save_table(tn)  # 💾 Guardar en disco
+            return resultado
+
+        if self.en_transaccion:
+            self.cambios_pendientes.append((accion, (table_name, column, value, where_clause)))
+            return f"UPDATE en '{table_name}' registrado en transacción."
+        else:
+            resultado = self.db.update(table_name, column, value, where_clause)
+            self.db.save_table(table_name)  # 💾 Guardar en disco
+            return f"Filas actualizadas: {resultado}"
 
     def execute_current_user(self):
         user = self.db.current_user
