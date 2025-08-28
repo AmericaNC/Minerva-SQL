@@ -196,16 +196,6 @@ class Executor:
         if permiso not in permisos:
             raise PermissionError(f"Permiso '{permiso}' requerido.")
 
-    #def execute_create_database(self, name):
-    #    self.check_permission("crear_base")
-    #    if name in self.db.databases:
-    #        result = f"La base de datos '{name}' ya existe."
-    #        return Fore.RED + result + Style.RESET_ALL
-    #    self.db.databases[name] = {}
-    #    db_folder = self.db.databases_path / name
-    #    db_folder.mkdir(exist_ok=True)
-    #    result = f"Base de datos '{name}' creada exitosamente."
-    #    return Fore.GREEN + result + Style.RESET_ALL
     def execute_create_database(self, name):
         self.check_permission("crear_base")
 
@@ -230,11 +220,6 @@ class Executor:
             result = f"Base de datos '{name}' creada exitosamente."
             return Fore.GREEN + result + Style.RESET_ALL
 
-    #def execute_update(self, table_name, column, value, where_clause):
-    #    self.check_permission("actualizar")
-    #    resultado = self.db.update(table_name, column, value, where_clause)
-    #    self.db.save_table(table_name)  # 💾 Guardar cambios
-    #    return f"Filas actualizadas: {resultado}"
     def execute_update(self, table_name, column, value, where_clause):
         self.check_permission("actualizar")
 
@@ -260,22 +245,44 @@ class Executor:
         self.check_permission("contar")
         return self.db.count(table_name, where_clause)
     
-    def execute_delete(self, table_name, where_clause):
-        self.check_permission("eliminar")
-        deleted_rows = self.db.delete(table_name, where_clause)
-        self.db.save_table(table_name)  # 💾 Guardar cambios
-        result = f"Filas eliminadas: {deleted_rows}"
-        return Fore.GREEN + result + Style.RESET_ALL
+    #def execute_delete(self, table_name, where_clause):
+    #    self.check_permission("eliminar")
+    #    deleted_rows = self.db.delete(table_name, where_clause)
+    #    self.db.save_table(table_name)  # 💾 Guardar cambios
+    #    result = f"Filas eliminadas: {deleted_rows}"
+    #    return Fore.GREEN + result + Style.RESET_ALL
+    
+    #def execute_create(self, table_name, columns):
+    #    self.check_permission("crear_tabla")
+    #    if table_name in self.db.tables:
+    #        raise ValueError(f"La tabla '{table_name}' ya existe.")
+    #    self.db.tables[table_name] = []
+    #    self.db.save_table(table_name)  # 💾 Guardar la nueva tabla
+    #    result = f"Tabla '{table_name}' creada con columnas {columns}."
+    #    return Fore.GREEN + result + Style.RESET_ALL
     
     def execute_create(self, table_name, columns):
         self.check_permission("crear_tabla")
-        if table_name in self.db.tables:
-            raise ValueError(f"La tabla '{table_name}' ya existe.")
-        self.db.tables[table_name] = []
-        self.db.save_table(table_name)  # 💾 Guardar la nueva tabla
-        result = f"Tabla '{table_name}' creada con columnas {columns}."
-        return Fore.GREEN + result + Style.RESET_ALL
-    
+
+    # Acción diferida para COMMIT
+        def accion(tn, cols):
+            if tn in self.db.tables:
+                raise ValueError(f"La tabla '{tn}' ya existe.")
+            self.db.tables[tn] = []
+            self.db.save_table(tn)  # 💾 Guardar en disco
+            return f"Tabla '{tn}' creada con columnas {cols}."
+
+        if self.en_transaccion:
+            self.cambios_pendientes.append((accion, (table_name, columns)))
+            return f"CREATE TABLE '{table_name}' registrado en transacción."
+        else:
+            if table_name in self.db.tables:
+                raise ValueError(f"La tabla '{table_name}' ya existe.")
+            self.db.tables[table_name] = []
+            self.db.save_table(table_name)  # 💾 Guardar en disco
+            result = f"Tabla '{table_name}' creada con columnas {columns}."
+            return Fore.GREEN + result + Style.RESET_ALL
+
     def execute_mostrar_tablas(self):
         db_name = self.db.current_db
         tablas = list(self.db.tables.keys())
