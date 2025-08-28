@@ -67,17 +67,7 @@ class Executor:
     def execute_current_database(self):
         result = f"Base de datos actual: {self.db.current_db}"
         return Fore.GREEN + result + Style.RESET_ALL
-    
-    #def execute_drop_database(self, db_name):
-    #    self.check_permission("eliminar")
-    #    if db_name == self.db.current_db:
-    #        return "No se puede eliminar la base de datos actualmente en uso."
-    #    try:
-    #        self.db.drop_database(db_name)
-    #        return f"Base de datos '{db_name}' eliminada correctamente."
-    #    except Exception as e:
-    #        return f"Error al eliminar base de datos: {str(e)}"
-
+  
     def execute_drop_database(self, db_name):
         self.check_permission("eliminar")
         if db_name == self.db.current_db:
@@ -96,10 +86,22 @@ class Executor:
             except Exception as e:
                 return f"Error al eliminar base de datos: {str(e)}"
 
+    #def execute_create_user(self, username, password):
+    #    self.check_permission("crear_usuario")
+    #    self.usuarios.agregar_usuario(username, password)
+    #    return f"Usuario '{username}' creado."
     def execute_create_user(self, username, password):
         self.check_permission("crear_usuario")
-        self.usuarios.agregar_usuario(username, password)
-        return f"Usuario '{username}' creado."
+        def accion(u, p):
+            self.usuarios.agregar_usuario(u, p)
+        if self.en_transaccion:
+        # Guardar en la lista de cambios pendientes
+            self.cambios_pendientes.append((accion, (username, password)))
+            return f"CREATE USER '{username}' registrado en transacción."
+        else:
+        # Ejecución inmediata
+            self.usuarios.agregar_usuario(username, password)
+            return f"Usuario '{username}' creado."
 
 
     def execute_login(self, username, password):

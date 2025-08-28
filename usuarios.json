@@ -27,5 +27,13 @@
   "fernando": {
     "password": "1234",
     "permisos": []
+  },
+  "karla": {
+    "password": "1234",
+    "permisos": []
+  },
+  "ALBERTO": {
+    "password": "1254",
+    "permisos": []
   }
 }
