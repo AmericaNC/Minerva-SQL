@@ -299,24 +299,39 @@ class Executor:
         result = f"Tabla '{table_name}':\nColumnas: {table_columns}\nFilas: {num_rows}"
         return result
 
+    #def execute_drop_table(self, table_name):
+    #    self.check_permission("eliminar")
+    #    success = self.db.drop_table(table_name)
+    #    return f"Tabla '{table_name}' eliminada." if success else f"No se pudo eliminar la tabla '{table_name}'."
+
     def execute_drop_table(self, table_name):
         self.check_permission("eliminar")
-        success = self.db.drop_table(table_name)
-        return f"Tabla '{table_name}' eliminada." if success else f"No se pudo eliminar la tabla '{table_name}'."
 
+    # Acción diferida para COMMIT
+        def accion(tn):
+            success = self.db.drop_table(tn)
+            return f"Tabla '{tn}' eliminada." if success else f"No se pudo eliminar la tabla '{tn}'."
 
-    def execute_drop(self, table_name):
-        self.check_permission("eliminar_tabla")
-        if table_name in self.db.tables:
-            del self.db.tables[table_name]
-            db_folder = self.db.databases_path / self.db.current_db
-            file_path = db_folder / f"{table_name}.json"
-            if file_path.exists():
-                file_path.unlink()  # 🗑️ Borrar archivo
-                result = f"Tabla '{table_name}' eliminada."
-            return Fore.GREEN + result + Style.RESET_ALL
+        if self.en_transaccion:
+            self.cambios_pendientes.append((accion, (table_name,)))
+            return f"DROP TABLE '{table_name}' registrado en transacción."
         else:
-            result = f"La tabla '{table_name}' no existe."
-            return Fore.GREEN + result + Style.RESET_ALL
+            success = self.db.drop_table(table_name)
+            return f"Tabla '{table_name}' eliminada." if success else f"No se pudo eliminar la tabla '{table_name}'."
+
+
+    #def execute_drop(self, table_name):
+    #    self.check_permission("eliminar_tabla")
+    #    if table_name in self.db.tables:
+    #        del self.db.tables[table_name]
+    #        db_folder = self.db.databases_path / self.db.current_db
+    #        file_path = db_folder / f"{table_name}.json"
+    #        if file_path.exists():
+    #            file_path.unlink()  # 🗑️ Borrar archivo
+    #            result = f"Tabla '{table_name}' eliminada."
+    #        return Fore.GREEN + result + Style.RESET_ALL
+    #    else:
+    #        result = f"La tabla '{table_name}' no existe."
+     #       return Fore.GREEN + result + Style.RESET_ALL
 
 
