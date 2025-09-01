@@ -48,11 +48,12 @@ class Executor:
     def execute(self, parsed_query):
         if parsed_query["type"] == "SELECT":
             try:
-        # Ejecuta la selección sin preocuparse si es "*" o columnas específicas
+            # Ahora la función select recibe la cláusula "order_by"
                 return self.db.select(
                     parsed_query["table"],
                     parsed_query["columns"],
-                    parsed_query.get("where")
+                    parsed_query.get("where"),
+                    parsed_query.get("order_by")
                 )
             except Exception as e:
                 return f"Error: {e}"
@@ -63,6 +64,46 @@ class Executor:
             return self.execute_current_user()
         elif parsed_query["type"] == "CURRENT_DATABASE":
             return self.execute_current_database()
+        elif parsed_query["type"] == "CREATE_TRIGGER":
+            return self.execute_create_trigger(
+                parsed_query["trigger_name"],
+                parsed_query["table"],
+                parsed_query["event"],
+                parsed_query["timing"]
+            )
+
+    def execute_show_triggers(self, table_name=None):
+        triggers = self.db.triggers
+        if table_name:
+            table_triggers = triggers.get(table_name, {})
+            if not table_triggers:
+                return f"No hay triggers en la tabla '{table_name}'."
+            result = [f"Evento '{event}': {[func.__name__ for func in funcs]}" 
+                    for event, funcs in table_triggers.items()]
+            return "\n".join(result)
+        else:
+            all_triggers = []
+            for table, events in triggers.items():
+                for event, funcs in events.items():
+                    all_triggers.append(f"Tabla '{table}', Evento '{event}': {[func.__name__ for func in funcs]}")
+            return "\n".join(all_triggers) if all_triggers else "No hay triggers registrados."
+
+    def execute_create_trigger(self, trigger_name, table_name, event, timing="DESPUES"):
+        """
+        trigger_name: nombre del trigger
+        table_name: tabla sobre la que actúa
+        event: INSERT, UPDATE, DELETE
+        timing: ANTES o DESPUES (opcional)
+        """
+        self.check_permission("crear_trigger")
+
+    # Definir trigger simple que solo imprime el registro
+        def trigger_func(row):
+            print(f"[TRIGGER {trigger_name}] Evento {event} en {table_name}: {row}")
+
+        self.db.add_trigger(table_name, event, trigger_func)
+        return f"Trigger '{trigger_name}' agregado a la tabla '{table_name}' para {timing} {event}."
+
 
     def execute_current_database(self):
         result = f"Base de datos actual: {self.db.current_db}"
@@ -99,6 +140,27 @@ class Executor:
             self.usuarios.agregar_usuario(username, password)
             return f"Usuario '{username}' creado."
 
+    #def execute_create_user(self, username, password):
+    #    self.check_permission("crear_usuario")
+    #    def accion_crear_usuario(u, p):
+    #        self.usuarios.agregar_usuario(u, p)
+    #        print(f"Usuario '{u}' creado exitosamente.")
+    #        self.create_default_user_trigger(u)
+
+    #    if self.en_transaccion:
+    #        self.cambios_pendientes.append((accion_crear_usuario, (username, password)))
+    #        return f"CREATE USER '{username}' registrado en transacción."
+    #    else:
+    #        accion_crear_usuario(username, password)
+    #        return f"Usuario '{username}' creado, y trigger asociado inicializado."
+
+    def create_default_user_trigger(self, username):
+        """
+        Función que crea un trigger predefinido para el nuevo usuario.
+        """
+        def user_login_message():
+            print(f"¡Bienvenido! El usuario '{username}' acaba de iniciar sesión. 👋")
+        print(f"Trigger para el usuario '{username}' creado y activado.")
 
     def execute_login(self, username, password):
         if self.usuarios.verificar_credenciales(username, password):
@@ -244,22 +306,7 @@ class Executor:
     def execute_count(self, table_name, where_clause):
         self.check_permission("contar")
         return self.db.count(table_name, where_clause)
-    
-    #def execute_delete(self, table_name, where_clause):
-    #    self.check_permission("eliminar")
-    #    deleted_rows = self.db.delete(table_name, where_clause)
-    #    self.db.save_table(table_name)  # 💾 Guardar cambios
-    #    result = f"Filas eliminadas: {deleted_rows}"
-    #    return Fore.GREEN + result + Style.RESET_ALL
-    
-    #def execute_create(self, table_name, columns):
-    #    self.check_permission("crear_tabla")
-    #    if table_name in self.db.tables:
-    #        raise ValueError(f"La tabla '{table_name}' ya existe.")
-    #    self.db.tables[table_name] = []
-    #    self.db.save_table(table_name)  # 💾 Guardar la nueva tabla
-    #    result = f"Tabla '{table_name}' creada con columnas {columns}."
-    #    return Fore.GREEN + result + Style.RESET_ALL
+   
     
     def execute_create(self, table_name, columns):
         self.check_permission("crear_tabla")
@@ -299,11 +346,6 @@ class Executor:
         result = f"Tabla '{table_name}':\nColumnas: {table_columns}\nFilas: {num_rows}"
         return result
 
-    #def execute_drop_table(self, table_name):
-    #    self.check_permission("eliminar")
-    #    success = self.db.drop_table(table_name)
-    #    return f"Tabla '{table_name}' eliminada." if success else f"No se pudo eliminar la tabla '{table_name}'."
-
     def execute_drop_table(self, table_name):
         self.check_permission("eliminar")
 
@@ -319,19 +361,5 @@ class Executor:
             success = self.db.drop_table(table_name)
             return f"Tabla '{table_name}' eliminada." if success else f"No se pudo eliminar la tabla '{table_name}'."
 
-
-    #def execute_drop(self, table_name):
-    #    self.check_permission("eliminar_tabla")
-    #    if table_name in self.db.tables:
-    #        del self.db.tables[table_name]
-    #        db_folder = self.db.databases_path / self.db.current_db
-    #        file_path = db_folder / f"{table_name}.json"
-    #        if file_path.exists():
-    #            file_path.unlink()  # 🗑️ Borrar archivo
-    #            result = f"Tabla '{table_name}' eliminada."
-    #        return Fore.GREEN + result + Style.RESET_ALL
-    #    else:
-    #        result = f"La tabla '{table_name}' no existe."
-     #       return Fore.GREEN + result + Style.RESET_ALL
 
 

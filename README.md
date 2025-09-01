@@ -34,6 +34,9 @@ INSERTAR EN datos VALORES (130, 39);
 INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
 ```
 ```sql
+SELECCIONA NOMBRE, EDAD DESDE pacientes DONDE ID = 1 ORDENAR POR EDAD;
+```
+```sql
 ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
 ```
 ```sql
@@ -126,6 +129,49 @@ OTORGAR crear_tabla A fernando;
 ```
 ```sql
 OTORGAR eliminar_tabla A fernando;
+```
+### Retirar los permisos
+```sql
+REVOCAR ver_bases A fernando;
+```
+```sql
+REVOCAR otorgar A fernando;
+```
+```sql
+REVOCAR ver_tablas A fernando;
+```
+```sql
+REVOCAR insertar A fernando;
+```
+```sql
+REVOCAR usar_base A fernando;
+```
+```sql
+REVOCAR ver_usuarios A fernando;
+```
+```sql
+REVOCAR crear_base A fernando;
+```
+```sql
+REVOCAR actualizar A fernando;
+```
+```sql
+REVOCAR contar A fernando;
+```
+```sql
+REVOCAR eliminar A fernando;
+```
+```sql
+REVOCAR crear_tabla A fernando;
+```
+```sql
+REVOCAR eliminar_tabla A fernando;
+```
+```sql
+REVOCAR crear_tabla A karla;
+```
+```sql
+REVOCAR ver_bases A karla;
 ```
 ## Explicación
 

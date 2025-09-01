@@ -1,0 +1,22 @@
+[
+  {
+    "ID": 1,
+    "NOMBRE": "America",
+    "EDAD": 20
+  },
+  {
+    "ID": 2,
+    "NOMBRE": "Luisisto",
+    "EDAD": 20
+  },
+  {
+    "ID": 3,
+    "NOMBRE": "Prueba",
+    "EDAD": 18
+  },
+  {
+    "ID": 3,
+    "NOMBRE": "Prueba 2",
+    "EDAD": 5
+  }
+]

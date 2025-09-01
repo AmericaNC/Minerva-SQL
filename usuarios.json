@@ -31,12 +31,5 @@
   "karla": {
     "password": "1234",
     "permisos": []
-  },
-  "ALBERTO": {
-    "password": "1254",
-    "permisos": [
-      "ver_bases",
-      "usar_base"
-    ]
   }
 }

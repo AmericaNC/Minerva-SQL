@@ -34,17 +34,14 @@ class Database:
     def __init__(self):
         self.databases_path = Path("databases")
         self.databases_dir = "databases"
+        self.triggers = {} 
+        self.triggers_file_path = Path("databases/triggers.json")
+        self.load_triggers()
         self.databases_path.mkdir(exist_ok=True)
         self.databases = {"default": {}}
         self.current_db = "default"
         #self.users = {"root": "rootpass"}
         self.current_user = "root"  # ← login automático
-        #self.permissions = {
-         #   "root": {"crear_tabla", "ver_usuarios", "insertar", "usar_base", "crear_base", 
-         #            "eliminar_usuario", "otorgar", "ver_bases", "ver_tablas", 
-         #            "actualizar", "contar", "eliminar", "eliminar_tablas"}
-        #}
-
         self.load_all_databases()
         # Si no hay bases, creamos 'default'
         if "default" not in self.databases:
@@ -62,6 +59,67 @@ class Database:
         default_path = os.path.join(self.databases_dir, "default")
         if not os.path.exists(default_path):
             os.makedirs(default_path)
+    
+    
+
+
+
+
+    def load_triggers(self):
+        """Carga los triggers desde el archivo JSON al iniciar el programa."""
+        if self.triggers_file_path.exists():
+            with open(self.triggers_file_path, "r") as f:
+                try:
+                    # Cargar los triggers del archivo. Por ahora, solo los nombres.
+                    # La lógica de las funciones se define al cargarlas.
+                    self.triggers = json.load(f)
+                    print(f"Triggers cargados desde {self.triggers_file_path}")
+                except (json.JSONDecodeError, FileNotFoundError):
+                    print("Error al cargar triggers o archivo no encontrado. Creando uno nuevo.")
+                    self.triggers = {}
+        else:
+            self.save_triggers()  # Crea el archivo si no existe
+
+    def save_triggers(self):
+        """Guarda los triggers en un archivo JSON."""
+        # Se guarda el diccionario de triggers en el archivo
+        with open(self.triggers_file_path, "w") as f:
+            # Serializamos el diccionario para guardarlo como JSON
+            json.dump(self.triggers, f, indent=4)
+            print(f"Triggers guardados en {self.triggers_file_path}")
+
+    def add_trigger(self, table, event, function_name):
+        """Añade un trigger y lo guarda en el archivo."""
+        if table not in self.triggers:
+            self.triggers[table] = {}
+        self.triggers[table][event] = function_name
+        self.save_triggers() # Guarda el estado después de añadir un trigger
+
+    # ... tu método run_triggers() necesita ser actualizado
+    # para usar el nombre de la función y no la función en sí
+    def run_triggers(self, table, event, row):
+        function_name = self.triggers.get(table, {}).get(event)
+        if function_name:
+            # Aquí necesitarás un mapeo de nombres a funciones
+            # para invocar la función correcta.
+            # Ejemplo simple:
+            if function_name == "user_login_message":
+                user_login_message(row) 
+
+
+
+
+
+    def run_triggers(self, table_name, event):
+    # Obtener el trigger para la tabla y el evento.
+    # Por ahora, solo tenemos uno fijo.
+        trigger_func = self.triggers.get(table_name, {}).get(event)
+    
+        if trigger_func:
+        # Aquí, podrías pasar la fila de datos si estuvieras
+        # manejando la lógica de la operación (ej. INSERT, UPDATE).
+        # Por ahora, solo ejecutamos la función.
+            trigger_func()
 
     def list_databases(self):
         """Lista las carpetas dentro de 'databases/' que representan bases de datos."""
@@ -75,6 +133,17 @@ class Database:
             if db_folder.is_dir():
                 db_name = db_folder.name
                 self.databases[db_name] = self.load_tables(db_name)
+
+    def add_trigger(self, table, event, function):
+        if table not in self.triggers:
+            self.triggers[table] = {}
+        if event not in self.triggers[table]:
+            self.triggers[table][event] = []
+        self.triggers[table][event].append(function)
+
+    def run_triggers(self, table, event, row):
+        for func in self.triggers.get(table, {}).get(event, []):
+            func(row)
 
     def set_current_database(self, db_name):
         db_folder = self.databases_path / db_name
@@ -116,8 +185,16 @@ class Database:
     def login(self, username, password):
         if username not in self.users or self.users[username] != password:
             return "Usuario o contraseña incorrectos."
+    
         self.current_user = username
+    
+    # Ejecutar trigger tipo AFTER_LOGIN si existe
+    # Asumiendo que creaste un trigger en la tabla 'usuarios' y evento 'LOGIN'
+        fake_row = {"username": username}  # Puedes pasar los datos que necesites
+        self.run_triggers("usuarios", "LOGIN", fake_row)
+    
         return f"Sesión iniciada como '{username}'."
+
 
     def eliminar_usuario(self, nombre):
         if nombre not in self.users:
@@ -172,15 +249,21 @@ class Database:
 
 
 
-    def select(self, table_name, columns, where_clause=None):
-        """Consulta datos de la tabla especificada y los devuelve en formato de tabla."""
+    def select(self, table_name, columns, where_clause=None, order_by_clause=None):
+        """
+        Consulta datos de la tabla especificada y los devuelve en formato de tabla.
+        Ahora incluye la funcionalidad de ordenamiento.
+        """
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")
+
         table = self.tables[table_name]
+
         if columns == ["*"]:
             if not table:
                 return "La tabla está vacía."
             columns = list(table[0].keys())
+    
         results = []
         for row in table:
             if where_clause:
@@ -192,20 +275,37 @@ class Database:
                 if operator == "EQ" and not (row[column] == value):
                     continue
             results.append({col: row[col] for col in columns})
+
+    # Lógica de ordenamiento: si existe una cláusula ORDER BY, ordena los resultados.
+        if order_by_clause:
+            if not results:
+                return "La tabla está vacía y no puede ser ordenada."
+        
+            try:
+            # Ordena los resultados usando el valor de la columna especificada.
+                results.sort(key=lambda row: row[order_by_clause])
+            except KeyError:
+                raise ValueError(f"La columna '{order_by_clause}' no existe en la tabla.")
+
         if not results:
             return "No se encontraron resultados"
+
+    # Resto de tu código para formatear la tabla
         col_widths = {}
         for col in columns:
             col_widths[col] = max(len(str(col)), max(len(str(row[col])) for row in results))
+
         border = "+" + "+".join(["-" * (width + 2) for width in col_widths.values()]) + "+"
         table_str = f"\n{border}\n"
         table_str += "|" + "|".join([f" {col.center(col_widths[col])} " for col in columns]) + "|\n"
         table_str += border + "\n"
+    
         for row in results:
             row_str = "|"
             for col in columns:
                 row_str += f" {str(row[col]).ljust(col_widths[col])} |"
             table_str += row_str + "\n"
+        
         table_str += border
         return table_str
 

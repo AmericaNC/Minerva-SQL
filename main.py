@@ -18,6 +18,7 @@ from executor import Executor
 from database import Database
 from parser.transaction_parse import TransactionParser
 from parser.revoke_parser import RevokeParser
+from parser.show_trigger import ShowTriggersParser
 import json
 import sys
 import os
@@ -444,6 +445,21 @@ while True:
                     print()
                 else:
                     print(f"{Fore.RED}Error: Comando '{cmd}' no reconocido{Style.RESET_ALL}")
+        
+        elif len(tokens) > 1 and tokens[0][1] == "MOSTRAR" and tokens[1][1] == "TRIGGERS":
+    # parser y ejecución aquí
+            parser = ShowTriggersParser(tokens)
+            parsed_query = parser.parse()
+            if debug_mode:
+                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
+                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
+            result = executor.execute_show_triggers(parsed_query.get("table"))
+            if debug_mode:
+                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            else:
+                print(f"Resultado: {result}")
+        
 
         elif tokens[0][0] == "DELETE" and tokens[1][0] == "DATABASE":
             from parser.drop_database_parser import DropDatabaseParser
