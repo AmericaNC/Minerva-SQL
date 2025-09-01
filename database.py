@@ -249,10 +249,10 @@ class Database:
 
 
 
-    def select(self, table_name, columns, where_clause=None, order_by_clause=None):
+    def select(self, table_name, columns, where_clause=None, order_by_clause=None, order_direction=None):
         """
         Consulta datos de la tabla especificada y los devuelve en formato de tabla.
-        Ahora incluye la funcionalidad de ordenamiento.
+        Ahora incluye la funcionalidad de ordenamiento ascendente o descendente.
         """
         if table_name not in self.tables:
             raise ValueError(f"La tabla '{table_name}' no existe.")
@@ -266,31 +266,47 @@ class Database:
     
         results = []
         for row in table:
+            row_matches_condition = True
             if where_clause:
                 column, operator, value = where_clause
-                if operator == "GT" and not (row[column] > value):
-                    continue
-                if operator == "LT" and not (row[column] < value):
-                    continue
-                if operator == "EQ" and not (row[column] == value):
-                    continue
-            results.append({col: row[col] for col in columns})
+            
+            # Convierte el valor a comparar al tipo de dato de la columna
+            # para que la comparación funcione correctamente.
+                try:
+                # Intenta convertir el valor de comparación al tipo del valor en la fila
+                    converted_value = type(row[column])(value)
+                except (ValueError, TypeError):
+                # Si no se puede convertir, usa el valor original
+                    converted_value = value
+            
+            # Nueva lógica de comparación: solo continúa si la condición es verdadera
+                if operator == "EQ":
+                    if row[column] != converted_value:
+                        row_matches_condition = False
+                elif operator == "GT":
+                    if not (row[column] > converted_value):
+                        row_matches_condition = False
+                elif operator == "LT":
+                    if not (row[column] < converted_value):
+                        row_matches_condition = False
+        
+            if row_matches_condition:
+                results.append({col: row[col] for col in columns})
 
-    # Lógica de ordenamiento: si existe una cláusula ORDER BY, ordena los resultados.
         if order_by_clause:
             if not results:
                 return "La tabla está vacía y no puede ser ordenada."
         
             try:
-            # Ordena los resultados usando el valor de la columna especificada.
-                results.sort(key=lambda row: row[order_by_clause])
+            # Convierte la dirección a mayúsculas para evitar problemas de sensibilidad a mayúsculas
+                reverse_order = order_direction.upper() == "DESC"
+                results.sort(key=lambda row: row[order_by_clause], reverse=reverse_order)
             except KeyError:
                 raise ValueError(f"La columna '{order_by_clause}' no existe en la tabla.")
 
         if not results:
             return "No se encontraron resultados"
 
-    # Resto de tu código para formatear la tabla
         col_widths = {}
         for col in columns:
             col_widths[col] = max(len(str(col)), max(len(str(row[col])) for row in results))
@@ -305,9 +321,11 @@ class Database:
             for col in columns:
                 row_str += f" {str(row[col]).ljust(col_widths[col])} |"
             table_str += row_str + "\n"
-        
+    
         table_str += border
         return table_str
+
+
 
 
     def delete(self, table_name, where_clause):

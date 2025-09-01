@@ -17,6 +17,23 @@
 python main.py
 ```
 
+
+## Control de Transacciones
+
+El **control de transacciones** te permite agrupar una serie de operaciones de base de datos en una única unidad de trabajo.  
+Esto asegura que todas las operaciones se completen con éxito o, si ocurre algún error, que ninguna de ellas se aplique, manteniendo la integridad de tus datos.
+
+---
+
+## BEGIN
+
+El comando **BEGIN** marca el inicio de una nueva transacción.  
+Desde este punto, todas las operaciones de modificación de datos (`INSERTAR`, `ACTUALIZAR`, `ELIMINAR`) se registran temporalmente.
+
+### Ejemplo:
+```sql
+BEGIN;
+
 ## Secuencias Actuales
 Éstas son las instrucciones reconocidas por el motor (ejemplos que pueden copiarse y probarse, no estrictamente la estructura lógica de las instrucciones, ésta se encuentra en HELP)
 
@@ -34,7 +51,10 @@ INSERTAR EN datos VALORES (130, 39);
 INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
 ```
 ```sql
-SELECCIONA NOMBRE, EDAD DESDE pacientes DONDE ID = 1 ORDENAR POR EDAD;
+SELECCIONA NOMBRE, EDAD DESDE empleados DONDE DEPARTAENTO = 1 ORDENAR POR EDAD ASC;
+```
+```sql
+SELECCIONA NOMBRE, EDAD DESDE empleados DONDE DEPARTAENTO = 1 ORDENAR POR EDAD DESC;
 ```
 ```sql
 ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;

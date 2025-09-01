@@ -48,12 +48,13 @@ class Executor:
     def execute(self, parsed_query):
         if parsed_query["type"] == "SELECT":
             try:
-            # Ahora la función select recibe la cláusula "order_by"
+            # Pasa la dirección de ordenamiento a la función select
                 return self.db.select(
                     parsed_query["table"],
                     parsed_query["columns"],
                     parsed_query.get("where"),
-                    parsed_query.get("order_by")
+                    parsed_query.get("order_by"),
+                    parsed_query.get("order_direction") # <--- Línea agregada
                 )
             except Exception as e:
                 return f"Error: {e}"
@@ -71,6 +72,7 @@ class Executor:
                 parsed_query["event"],
                 parsed_query["timing"]
             )
+
 
     def execute_show_triggers(self, table_name=None):
         triggers = self.db.triggers
