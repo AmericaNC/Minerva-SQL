@@ -216,25 +216,6 @@ while True:
                 print(json.dumps(result, indent=2, ensure_ascii=False))
             else:
                 print(f"Resultado: {result}")
-        
-      
-
-
-
-        elif tokens[0][0] == "DROP" and tokens[1][0] == "USER":
-            parser = DropUserParser(tokens)
-            parsed_query = parser.parse()
-            if debug_mode:
-                print(f"{Fore.BLUE}[DEBUG PARSER] Árbol sintáctico:")
-                print(json.dumps(parsed_query, indent=2, ensure_ascii=False))
-            result = executor.execute_drop_user(parsed_query["username"])
-            if debug_mode:
-                print(f"{Fore.GREEN}[DEBUG EXEC] Resultado ejecución:")
-                print(json.dumps(result, indent=2, ensure_ascii=False))
-            else:
-                print(f"Resultado: {result}")
-                print(result)
-
 
         elif tokens[0][0] == "LOGIN":
             parser = LoginParser(tokens)

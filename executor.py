@@ -65,6 +65,27 @@ class Executor:
             return self.execute_current_user()
         elif parsed_query["type"] == "CURRENT_DATABASE":
             return self.execute_current_database()
+        elif parsed_query["type"] == "DELETE":
+            table_name = parsed_query["table"]
+            where_clause = parsed_query["where"]
+            try:
+            # Llama al método de la clase Database para el borrado.
+            # Este método (self.db.delete_from_table) debe devolver el número de filas afectadas.
+                rows_affected = self.db.delete_from_table(table_name, where_clause)
+            
+                if rows_affected > 0:
+                    return f"Éxito: Se borraron {rows_affected} registros de la tabla '{table_name}'."
+                elif rows_affected == 0:
+                    return f"Advertencia: No se encontró ningún registro para borrar en '{table_name}' que cumpla la condición."
+                else:
+                 # En caso de que la función retorne un valor inesperado (ej. None)
+                    return f"Error de borrado desconocido en '{table_name}'."
+
+            except KeyError:
+                return f"Error: La tabla '{table_name}' no existe en la base de datos actual."
+            except Exception as e:
+                return f"Error en la ejecución de DELETE: {e}"
+        
         elif parsed_query["type"] == "CREATE_TRIGGER":
             return self.execute_create_trigger(
                 parsed_query["trigger_name"],

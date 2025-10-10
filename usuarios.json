@@ -31,5 +31,9 @@
   "karla": {
     "password": "1234",
     "permisos": []
+  },
+  "fernanda": {
+    "password": "1234",
+    "permisos": []
   }
 }

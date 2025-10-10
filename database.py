@@ -383,7 +383,52 @@ class Database:
                 updated_rows += 1
         self.save_table(table_name)
         return updated_rows
-     
+    
+    def delete_from_table(self, table_name, where_clause):
+    
+    # 1. Obtener la tabla actual (asumiendo que manejas db.tables globalmente)
+        if table_name not in self.tables:
+        # O si manejas bases de datos, verifica la tabla en la base de datos actual
+            raise KeyError(f"Tabla '{table_name}' no encontrada.")
+
+        table_data = self.tables[table_name]
+        new_data = []
+        rows_affected = 0
+    
+    # 2. Iterar y aplicar la condición (Necesitas una función para evaluar el WHERE)
+    # Suponiendo que tienes una función 'evaluate_where(record, where_clause)'
+    
+        for record in table_data:
+        # Si la condición NO se cumple, MANTÉN el registro
+        # Usamos 'where_clause' que es [HR, =, 90]
+        # NOTA: La lógica de evaluación del WHERE es compleja y debe estar en otra función.
+        
+        # Lógica simplificada: SOLO borra si cumple la condición
+            if not self.evaluate_condition(record, where_clause): 
+                new_data.append(record)
+            else:
+                rows_affected += 1
+            
+    # 3. Actualizar la tabla
+        self.tables[table_name] = new_data
+        return rows_affected
+    def evaluate_condition(self, record, where_clause):
+    # donde_clause es: ["HR", "=", 90]
+        column, op, value = where_clause
+    
+        if column not in record:
+            # Ignoramos si la columna no existe o puedes lanzar un error
+            return False 
+        
+        record_value = record[column]
+    
+    # La lógica de los operadores EQ, NE, GT, LT, etc., debe ir aquí
+        if op == "=" or op == "EQ":
+            return record_value == value
+    # ... otros operadores ...
+    
+        return False
+
     def drop_table(self, table_name):
         """Elimina físicamente y en memoria la tabla indicada."""
         current_path = os.path.join("databases", self.current_db)

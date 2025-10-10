@@ -1,0 +1,534 @@
+<!-- FLESPI (VER COO CARGAR EL IOT)--> 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinervaSQL Web 🐱</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b'
+                        },
+                        indigo: {
+                            500: '#6366f1',
+                            600: '#4f46e5'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes purr {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .purr-animation {
+            animation: purr 2s ease-in-out infinite;
+        }
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            tab-size: 2;
+        }
+        .rotated {
+            transform: rotate(90deg);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex flex-col"> 
+
+    <header class="fixed top-0 left-0 right-0 bg-white border-b-2 border-emerald-200 shadow-sm z-50">
+        <div class="px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div>
+                    <h1 class="text-2xl font-bold text-emerald-900">MinervaSQL Web</h1>
+                    <p class="text-xs text-emerald-600">Intérprete SQL en Español</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-emerald-700">
+                <span class="text-sm">Hecho con</span>
+                <span class="text-red-500">❤️</span>
+                <span class="text-sm">para mi Wiches</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="fixed top-[73px] left-0 right-0 bg-emerald-700 border-b border-emerald-800 shadow-md z-40">
+        <div class="px-6 py-2 flex items-center gap-2">
+            <input type="file" id="fileInput" accept=".sql" class="hidden">
+            
+            <button 
+                id="executeBtn"
+                onclick="ejecutarComando()"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded font-semibold transition-all duration-200 flex items-center gap-2 shadow hover:shadow-lg"
+            >
+         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+</svg>
+
+Ejecutar
+            </button>
+            
+            <div class="h-6 w-px bg-emerald-500 mx-1"></div>
+            
+            <button 
+                onclick="document.getElementById('fileInput').click()"
+                class="bg-white hover:bg-emerald-50 text-emerald-900 px-4 py-2 rounded font-medium transition-all duration-200 flex items-center gap-2 border border-emerald-300"
+            >
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
+</svg>
+                Cargar
+            </button>
+
+            <button 
+                onclick="exportarCodigoSQL()"
+                class="bg-white hover:bg-emerald-50 text-emerald-900 px-4 py-2 rounded font-medium transition-all duration-200 flex items-center gap-2 border border-emerald-300"
+            >
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+</svg>
+                Exportar
+            </button>
+
+            <button 
+                onclick="limpiarEditor()"
+                class="bg-white hover:bg-emerald-50 text-emerald-900 px-4 py-2 rounded font-medium transition-all duration-200 flex items-center gap-2 border border-emerald-300"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+</svg>
+                Limpiar
+            </button>
+
+            <div class="ml-auto">
+                <div id="statusBadge" class="hidden">
+                    <span class="px-3 py-1 rounded text-sm font-medium bg-white text-emerald-800 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
+ Consulta ejecutada
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="h-[125px]"></div>
+    
+    <div class="w-full flex flex-grow p-6 gap-6 min-h-0 overflow-hidden">
+        <aside class="w-1/4 flex-shrink-0 flex flex-col min-h-0">
+            <div class="bg-white rounded-lg shadow-lg border border-emerald-200 overflow-hidden h-full flex flex-col"> 
+                <div class="bg-emerald-700 text-white px-4 py-3 flex-none">
+                    <h3 class="font-semibold text-lg flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+</svg>
+Bases de Datos
+                    </h3>
+                </div>
+                <div id="dbPanel" class="p-3 text-sm flex-grow overflow-y-auto">
+                    <p class="text-gray-500 p-2">Cargando...</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="w-3/4 flex-shrink-0 flex flex-col gap-6 min-h-0">
+            <div class="bg-white rounded-lg shadow-lg border border-emerald-200 overflow-hidden flex-none">
+                <div class="bg-emerald-600 text-white px-6 py-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+</svg>
+
+                    <h2 class="text-lg font-semibold">Editor SQL</h2>
+                    <span class="ml-auto text-xs text-emerald-100">Ctrl+Enter para ejecutar</span>
+                </div>
+                <div class="p-6">
+                    <textarea 
+                        id="comandoSql"
+                        class="code-editor w-full h-32 p-4 border-2 border-emerald-200 rounded-lg focus:border-emerald-500 focus:outline-none resize-none"
+                        placeholder="-- Escribe tu consulta SQL aquí 🐱
+-- Si seleccionas una parte, solo se ejecutará lo seleccionado.
+-- Ejemplo: SELECCIONA NOMBRE, EDAD DESDE usuarios;"
+                        spellcheck="false"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg border border-emerald-200 overflow-hidden flex-grow min-h-0 flex flex-col">
+                <div class="bg-emerald-600 text-white px-6 py-3 flex items-center gap-2 flex-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+</svg>
+
+                    <h2 class="text-lg font-semibold">Resultados</h2>
+                </div>
+                <div id="resultado" class="p-6 text-gray-700 overflow-y-auto flex-grow">
+                    <div class="text-center py-12 text-gray-500">
+                        <span class="text-6xl mb-4 block">😺</span>
+                        <p class="text-lg">¡Ejecuta una consulta para ver los resultados aquí!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function getTablesFromApi(dbName) {
+            const response = await fetch(`/tables/${dbName}`);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }));
+                throw new Error(errorData.error || `Error ${response.status}: No se pudo cargar la lista de tablas.`);
+            }
+            
+            const data = await response.json();
+            return data.tables || []; 
+        }
+
+        async function cargarTablas(dbName) {
+            const tableListDiv = document.getElementById(`tables-${dbName}`);
+           tableListDiv.innerHTML = `
+        <p class="text-gray-500 text-xs p-1 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Cargando...
+        </p>
+    `;
+
+            try {
+                const tables = await getTablesFromApi(dbName);
+                
+                let tableHtml = '';
+                
+                tableHtml += `
+    <button onclick="seleccionarBaseDeDatos('${dbName}')"
+            class="text-xs text-emerald-600 hover:text-emerald-900 font-semibold py-1 px-2 hover:bg-emerald-200 rounded-md transition-colors w-full text-left mb-1
+            
+            /* CLASE CLAVE: Añadir flex items-center gap-1 para alinear */
+            flex items-center gap-1">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-emerald-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+        </svg>
+        
+        USAR BASE
+    </button>
+    <p class="text-xs font-semibold text-emerald-800 pt-1 mb-1 border-t border-emerald-100">Tablas:</p>
+`;
+             if (tables.length > 0) {
+    tableHtml += tables.map(table => `
+        <div onclick="insertTableQuery('${dbName}', '${table}')"
+            class="cursor-pointer p-1 rounded-md hover:bg-emerald-100 text-gray-800 transition-colors duration-150 
+            
+            /* CAMBIO CLAVE: Cambiar gap-2 a gap-1 para reducir el espacio horizontal */
+            flex items-center gap-1 text-xs">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-emerald-500">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
+            </svg>
+            ${table}
+        </div>
+    `).join('');
+}else {
+                    tableHtml += '<p class="text-gray-500 text-xs p-1">No hay tablas.</p>';
+                }
+                
+                tableListDiv.innerHTML = tableHtml;
+
+            } catch (error) {
+                tableListDiv.innerHTML = `<p class="text-red-600 text-xs p-1">Error al cargar tablas: ${error.message}</p>`;
+                console.error('Error al cargar las tablas:', error);
+            }
+        }
+
+        function toggleTables(dbElement, dbName) {
+            const tableListDiv = document.getElementById(`tables-${dbName}`);
+            const iconElement = dbElement.querySelector('.toggle-icon');
+
+            const isHidden = tableListDiv.classList.contains('hidden');
+            
+            if (isHidden) {
+                tableListDiv.classList.remove('hidden');
+                iconElement.classList.add('rotated');
+                cargarTablas(dbName);
+            } else {
+                tableListDiv.classList.add('hidden');
+                iconElement.classList.remove('rotated');
+            }
+        }
+        
+        function insertTableQuery(dbName, tableName) {
+            const comandoSql = document.getElementById('comandoSql');
+            const newCommand = `SELECCIONA * DESDE ${tableName};`;
+            
+            comandoSql.value = `USAR BASE ${dbName};\n\n${newCommand}`;
+            comandoSql.focus();
+            ejecutarComando();
+        }
+        
+        async function cargarBasesDeDatos() {
+            const dbPanel = document.getElementById('dbPanel');
+            dbPanel.innerHTML = '<p class="text-gray-500 p-2 text-center">Cargando...</p>';
+
+            try {
+                const response = await fetch('/databases');
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }));
+                    throw new Error(errorData.error || `Error ${response.status}: No se pudo cargar la lista de bases de datos.`);
+                }
+                
+                const data = await response.json(); 
+                renderDatabases(data);
+
+            } catch (error) {
+                dbPanel.innerHTML = `<p class="text-red-600 p-2">Error al cargar BDD: ${error.message}</p>`;
+                console.error('Error al cargar las bases de datos:', error);
+            }
+        }
+        
+        function renderDatabases(data) {
+    const dbPanel = document.getElementById('dbPanel');
+    let html = '';
+
+    if (data.databases && data.databases.length > 0) {
+        html = data.databases.map(db => `
+            <div data-db-name="${db}" class="db-entry">
+                <div class="cursor-pointer p-2 rounded-lg hover:bg-emerald-100 text-emerald-900 font-medium transition-colors duration-150 flex items-center justify-between gap-2" 
+                    onclick="toggleTables(this, '${db}')">
+                    
+                    <span class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-emerald-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+                        </svg>
+                        ${db}
+                    </span>
+                    
+                    <span class="toggle-icon transition-transform duration-200"> 
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-emerald-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+                    
+                </div>
+                <div id="tables-${db}" class="table-list pl-6 border-l ml-3 my-1 border-emerald-300 hidden">
+                    <p class="text-gray-500 text-xs p-1">Cargando tablas...</p>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        html = '<p class="text-gray-500 p-2 text-center">No se encontraron BDD.</p>';
+    }
+    dbPanel.innerHTML = html;
+}
+
+        function seleccionarBaseDeDatos(dbName) {
+            const comandoSql = document.getElementById('comandoSql');
+            const useCommand = `USAR BASE ${dbName};`;
+            
+            if (comandoSql.value.trim().startsWith(useCommand)) {
+                comandoSql.focus();
+                return;
+            } else if (comandoSql.value.trim() === '' || comandoSql.value.trim().startsWith('--')) {
+                comandoSql.value = useCommand + '\n\n' + comandoSql.value;
+            } else {
+                comandoSql.value = useCommand + '\n' + comandoSql.value;
+            }
+            comandoSql.focus(); 
+        }
+
+        async function ejecutarComando() {
+            const textarea = document.getElementById('comandoSql');
+            const resultadoDiv = document.getElementById('resultado');
+            const executeBtn = document.getElementById('executeBtn');
+            const statusBadge = document.getElementById('statusBadge');
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            let comando;
+
+            if (start !== end) {
+                comando = textarea.value.substring(start, end).trim();
+            } else {
+                comando = textarea.value.trim();
+            }
+
+            if (!comando) {
+                resultadoDiv.innerHTML = `
+                    <div class="text-center py-8">
+                        <span class="text-6xl mb-4 block">😿</span>
+                        <p class="text-red-600 text-lg font-semibold">¡Oops! Escribe o selecciona una consulta primero.</p>
+                    </div>`;
+                return;
+            }
+
+            executeBtn.innerHTML = '<span class="animate-spin">⏳</span> Ejecutando...';
+            executeBtn.disabled = true;
+            statusBadge.classList.add('hidden');
+            resultadoDiv.innerHTML = '<p class="text-emerald-700 p-4">Procesando...</p>';
+
+            try {
+                const response = await fetch('/interpretar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comando })
+                });
+
+                const data = await response.json();
+                
+                const isError = data.resultado.startsWith('Error:');
+                const resultClass = isError ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+                const successIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+    </svg>
+`;
+
+const errorIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+`;
+
+// Aplicación de los iconos
+const icon = isError ? errorIcon : successIcon;
+                const title = isError ? 'Consulta fallida' : 'Consulta ejecutada';
+
+                resultadoDiv.innerHTML = `
+                    <div class="mb-4 flex items-center gap-2 px-6">
+                        <span class="text-2xl">${icon}</span>
+                        <span class="text-gray-700 font-semibold">${title}</span>
+                    </div>
+                    <pre class="bg-gray-100 p-4 rounded border text-sm whitespace-pre-wrap mx-6 mb-6">
+                        <p class="font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">Comando ejecutado:</p>
+                        <code class="block whitespace-pre-wrap text-emerald-900 bg-emerald-50 p-2 rounded">${comando}</code>
+                        <p class="font-bold text-gray-900 mt-4 mb-2 border-b border-gray-300 pb-1">Resultado:</p>
+                        ${data.resultado}
+                    </pre>
+                `;
+                statusBadge.classList.remove('hidden');
+                statusBadge.innerHTML = `<span class="px-3 py-1 rounded text-sm font-medium ${resultClass}">${isError ? 'Error' : 'Ejecutada'}</span>`;
+                
+                if (comando.toUpperCase().includes('CREA BASE DE DATOS') || comando.toUpperCase().includes('ELIMINA BASE DE DATOS')) {
+                    cargarBasesDeDatos();
+                } else if (comando.toUpperCase().includes('CREA TABLA')) {
+                    const activeDbElement = document.querySelector('.db-entry .toggle-icon.rotated');
+                    if (activeDbElement) {
+                           const dbName = activeDbElement.closest('.db-entry').dataset.dbName;
+                           cargarTablas(dbName);
+                    }
+                }
+
+            } catch (error) {
+                resultadoDiv.innerHTML = `
+                    <div class="text-center py-8">
+                        <span class="text-6xl mb-4 block">😿</span>
+                        <p class="text-red-600 text-lg font-semibold">Error de conexión con el servidor.</p>
+                        <p class="text-sm text-gray-600">${error}</p>
+                    </div>`;
+            } finally {
+                executeBtn.innerHTML = 'Ejecutar';
+                executeBtn.disabled = false;
+            }
+        }
+
+        function limpiarEditor() {
+            document.getElementById('comandoSql').value = '';
+            document.getElementById('resultado').innerHTML = `
+                <div class="text-center py-12 text-gray-500">
+                    <span class="text-6xl mb-4 block">😺</span>
+                    <p class="text-lg">¡Ejecuta una consulta para ver los resultados aquí!</p>
+                    <p class="text-sm mt-2">Los gatitos están esperando tus comandos SQL...</p>
+                </div>`;
+            document.getElementById('statusBadge').classList.add('hidden');
+        }
+        
+        function exportarCodigoSQL() {
+            const textarea = document.getElementById('comandoSql');
+            const content = textarea.value.trim();
+
+            if (!content) {
+                document.getElementById('resultado').innerHTML = `<p class="text-red-600 p-4">❌ El editor está vacío. ¡Escribe algo de SQL primero!</p>`;
+                document.getElementById('statusBadge').classList.add('hidden');
+                return;
+            }
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'consulta_minervasql.sql';
+            
+            document.body.appendChild(a); 
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href); 
+            
+            document.getElementById('resultado').innerHTML = `<p class="text-indigo-600 p-4">Archivo exportado correctamente.</p>`;
+            document.getElementById('statusBadge').classList.add('hidden');
+        }
+
+        function cargarCodigoSQL() {
+            const fileInput = document.getElementById('fileInput');
+            const textarea = document.getElementById('comandoSql');
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (fileInput.files.length === 0) {
+                return; 
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            resultadoDiv.innerHTML = `<p class="text-emerald-700 p-4">Leyendo archivo: ${file.name}...</p>`;
+            document.getElementById('statusBadge').classList.add('hidden');
+
+            reader.onload = (e) => {
+                textarea.value = e.target.result;
+                resultadoDiv.innerHTML = `<p class="text-green-600 p-4">Archivo cargado correctamente.</p>`;
+            };
+
+            reader.onerror = (e) => {
+                console.error("Error al leer el archivo:", e);
+                resultadoDiv.innerHTML = `<p class="text-red-600 p-4">Error al leer el archivo: ${e.target.error.name}</p>`;
+            };
+
+            reader.readAsText(file);
+        }
+
+        document.getElementById('comandoSql').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                ejecutarComando();
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('fileInput').addEventListener('change', cargarCodigoSQL);
+
+        window.onload = () => {
+            cargarBasesDeDatos();
+        };
+
+    </script>
+</body>
+</html>
