@@ -1,28 +1,14 @@
 import os
 from flask import Flask, request, jsonify, render_template
-
-# ***********************************
-# 1. CONFIGURACIÓN DEL DIRECTORIO DE BDD
-# ***********************************
-
-# Define la ruta donde se almacenan las bases de datos.
-# La carpeta 'databases' debe ser hermana de donde se ejecuta app.py
 DATABASE_DIR = 'databases'
-
-# IMPORTANTE: Creamos el directorio si no existe. 
-# Si ya existe, esta función no hace nada, lo cual es seguro.
 try:
     if not os.path.exists(DATABASE_DIR):
         # Crear el directorio 'databases'
         os.makedirs(DATABASE_DIR, exist_ok=True)
-        
-    # --- Lógica de creación de ejemplo para asegurar la prueba ---
     ejemplo_db_path = os.path.join(DATABASE_DIR, 'mi_primera_bd')
     if not os.path.exists(ejemplo_db_path):
          os.makedirs(ejemplo_db_path, exist_ok=True)
          
-         # Crear archivos JSON de tabla de ejemplo con contenido mínimo
-         # Escribimos los archivos *cada vez* si no existen para asegurar que estén disponibles
          with open(os.path.join(ejemplo_db_path, 'usuarios.json'), 'w') as f:
              f.write('{"columns": ["id", "nombre", "edad"], "data": []}')
              
