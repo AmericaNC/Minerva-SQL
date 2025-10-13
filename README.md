@@ -16,7 +16,9 @@
 ```sh
 python main.py
 ```
-
+<p align="center">
+  <img src="docs/minervalk.png" alt="Minerva Logo"/>
+</p>
 
 ## Control de Transacciones
 
@@ -25,7 +27,7 @@ Esto asegura que todas las operaciones se completen con éxito o, si ocurre alg�
 
 ---
 
-## BEGIN
+## Flujo de transacciones en el código
 
 El comando **BEGIN** marca el inicio de una nueva transacción.  
 Desde este punto, todas las operaciones de modificación de datos (`INSERTAR`, `ACTUALIZAR`, `ELIMINAR`) se registran temporalmente.
@@ -37,16 +39,35 @@ BEGIN;
 ## Secuencias Actuales
 Éstas son las instrucciones reconocidas por el motor (ejemplos que pueden copiarse y probarse, no estrictamente la estructura lógica de las instrucciones, ésta se encuentra en HELP)
 
-```sql
 SELECCIONA HR, TEMP DESDE datos;
 ```
+Una vez iniciada la transacción esta puede completarse o deshacerse. 
+
+### Ejemplo Rollback:
+Rollback esta pensado para cancelar el conjunto de transacciones que se pretendían realizar, para MinervaSQL el siguiente bloque de código sería respondido con un __transaccion cancelada__.
+```sql
+BEGIN;
+    SELECCIONA HR, TEMP DESDE datos;
+ROLLBACK
+```
+### Ejemplo COMMIT:
+Commit esta pensado para confirmar y realizar el conjunto de transacciones, para MinervaSQL el siguiente bloque de código sería respondido con un __transaccion completada__.
+```sql
+BEGIN;
+    USAR BASE paciente;
+    SELECCIONA HR, TEMP DESDE datos;
+COMMIT
+```
+Algunas de las ventajas de el manejo de flujo en MinervaSQL son:
+* Hace que sea mas sencillo el manejo de múltiples instrucciones.
+* Prueden realizarse instrucciones que se requieren en conjunto (ej. al momento de sleccionar datos de una tabla es necesario estar usando la base a la que pertenece).
+* Puede exportarse y usarse como un bloque recurrente.
+
+## Instrucciones soportadas por el gestor 
 ```sql
 SELECCIONA * DESDE datos;
 ```
-Pendiente a corregir
-```sql
-INSERTAR EN datos VALORES (130, 39);
-```
+
 ```sql
 INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
 ```
@@ -245,10 +266,17 @@ TOKEN_PATTERNS = [
     (r'\bELIMINAR\b', 'DELETE'),
     (r'\bDE\b', 'FROM'),
     (r'\bCONTAR\b', 'COUNT'),
+    (r'\bREVOCAR\b', 'REVOKE'),
+    (r'\bTRIGGERS\b', 'TRIGGERS'),
+    (r'\bTRIGGER\b', 'TRIGGER'),
+    (r'\bORDENAR\b', 'ORDENAR'),
+    (r'\bPOR\b', 'POR'),
+    (r'\bASC\b', 'ASC'),
+    (r'\bDESC\b', 'DESC'),
     (r'\bEQ\b', '='),
     (r'[a-zA-Z_][a-zA-Z0-9_]*', 'IDENTIFIER'),
     (r'\d+\.\d+', 'FLOAT'),
-    (r'\d+', 'NUMBER'),  # Asegura que los valores flotantes también se manejen
+    (r'\d+', 'NUMBER'),
     (r"\*", "ASTERISK"),
     (r'>', 'GT'),
     (r'<', 'LT'),
@@ -258,7 +286,7 @@ TOKEN_PATTERNS = [
     (r'\(', 'PARIZQ'),
     (r'\)', 'PARDER'),
     (r'(".*?"|\'.*?\')', 'STRING'),
-    (r'\s+', None)  # Espacios en blanco que se ignoran
+    (r'\s+', None) 
 ]
 
 ```
@@ -266,7 +294,7 @@ TOKEN_PATTERNS = [
 Interprete basado en SQL Español.
 Algunas reglas y aspectos relevantes:
 
-- Las consultas como promedio, suma, entre otras, se realizan por Medio de codigo externo.
+- Las consultas como promedio, suma, entre otras, se realizan por medio de codigo externo.
 - Los tipos de datos en insersion son de tipo FLOAT, INT y STRING.
 - La eliminacion de usuarios se maneja desde el archivo de control.
 - Los archivos de base de datos estan en la carpeta **database**.
@@ -281,11 +309,52 @@ Algunas reglas y aspectos relevantes:
 - El modo de depuración se activa y desactiva con la misma instrucción (MODO DEPURACION)
 - El modo de depuración explica en texto plano el debbugin.
 - No pueden revocarse permisos, seria neceario modificarlos desde JSON
+- MinervaSQL es un gestor SQL de escritorio, por lo que la interfaz gráfica *NO ESTA DISEÑADA PARA DISPOSITIVOS MÓVILES* no se recomienda usarla en resoluciones menores a 800 x 644 px
+- La interfaz GUI hace uso del puerto 5000
+
+## Interfaz de consola
+EL programa es amigable para Windows y Linux, la interfaz de consola es capaz de servir todos los comandos antes vistos, se ejecuta directamente como se ve en la imagen de referencia.
+
+### Presentación de la interfaz MinervaSQL
+![Interfaz de consola](docs/INTERFAZ.png)
+
+Se observa el uso de uno de los comandos en consola:
+
+![Interfaz de consola-AYUDA](docs/HELP.png)
+## Interfaz GUI
+La interfaz GUI contiene un navbar en donde es posible `ejecutar` el código ingresado, `cargar` y `exportar` archivos de extensión sql, `actualizar` el estado de las base de datos (después de adiciones o eliminaciones) `limpiar` el editor y un boton de `ayuda`, ademas de la posibilidad en el panel izquierdo de `crear bases de datos`, `usar bases de datos` y `eliminar` las mismas.
+
+![Interfaz de consola-AYUDA](docs/GUI.png)
+
+La interfaz maneja el método de inyección de código en la consola, de esta manera el usuario podrá ver cual es el código que está detrás de todas las peticiones que realiza por medio de la GUI.
+
+### Uso del dasboard de la GUI
+En la parte izquierda se ubica un panel demostrativo de las bases de datos contenidas, además de acciones rápidas sugeridas. En las siguientes imagenes se aprecia como se puede hacer uso de `USAR BASE` y `SELECCIONA * DESDE datos`, código que se inyecta al hacer clic sobre la base de datos y su tabla, respectivamente.
+![Interfaz de consola-AYUDA](docs/DASHBOARD.png)
+
+![Interfaz de consola-AYUDA](docs/DASHBOARD.png)
+
+### Crear Bases de datos 
+En el panel izquierdo, botón de suma "+" es posible agregar bases de datos de manera visual, haciendo clic sobre este, seleccionando el nombre y recargando la interfaz, en cuanto se actualice se reflejará en el panel.
+
+![Interfaz de consola-AYUDA](docs/CREARBASES.png)
+
+![Interfaz de consola-AYUDA](docs/CREARBASES2.png)
+
+### Presentación de la interfaz MinervaSQL
+Para exportar archivos de Minerva con extensión sql es necesario escribir el código en el editor y usar el botón de `exportar`, esta acción descargará el archivo directamente.
+
+![Interfaz de consola-AYUDA](docs/EXPORTAR.png)
+
+Si previamente se tiene un archivo y se desea cargarlo, se hará clic en el botón para cargar y se seleccionará dicho archivo, el contenido aparecerá directamente en la sección de edición.
+
+![Interfaz de consola-AYUDA](docs/CARGAR.png)
+![Interfaz de consola-AYUDA](docs/CARGAR2.png)
 
 ## Respaldos cifrados SSH 
-El proceso para crear respaldos de las bases de datos es el siguiente.
+El proceso para crear respaldos de las bases de datos es el siguiente:
 
-Para usar el respaldo por medio de ssh es necesario establecer una clave para ejecutar los scripts. Dicha clave se generara con el uso del siguiente comando.
+Para usar el respaldo por medio de ssh es necesario establecer una clave para ejecutar los scripts. Dicha clave se generará con el uso del siguiente comando:
 
 ```sh
 ssh-keygen -t rsa -b 4096 -C "usuario@ip_usuario"
