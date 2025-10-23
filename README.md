@@ -65,32 +65,32 @@ Algunas de las ventajas de el manejo de flujo en MinervaSQL son:
 
 ## Instrucciones soportadas por el gestor 
 ```sql
-SELECCIONA * DESDE datos;
+SELECCIONA * DESDE pacientes
 ```
 
 ```sql
-INSERTAR EN datos (HR, TEMP) VALORES (100, 37.1);
+INSERTAR EN pacientes (ID, ID_SALA, NOMBRE, EDAD) VALORES (1, 2, 'Karla 4', 4000);
 ```
 ```sql
-SELECCIONA NOMBRE, EDAD DESDE empleados DONDE DEPARTAENTO = 1 ORDENAR POR EDAD ASC;
+SELECCIONA NOMBRE, EDAD DESDE pacientes DONDE ID_SALA = 2 ORDENAR POR EDAD ASC;
 ```
 ```sql
-SELECCIONA NOMBRE, EDAD DESDE empleados DONDE DEPARTAENTO = 1 ORDENAR POR EDAD DESC;
+SELECCIONA NOMBRE, EDAD DESDE pacientes DONDE ID_SALA = 2 ORDENAR POR EDAD DESC;
 ```
 ```sql
-ACTUALIZAR datos CON HR = 95 DONDE TEMP = 36.5;
+ACTUALIZAR pacientes CON NOMBRE = 'Karla Vazquez' DONDE EDAD = 20;
 ```
 ```sql
 BORRAR DE datos DONDE HR EQ 90;
 ```
 ```sql
-DESHACER datos;
+DESHACER pacientes;
 ```
 ```sql
-CONTAR DESDE datos;
+CONTAR DESDE pacientes;
 ```
 ```sql
-CREAR TABLA pacientes (ID, NOMBRE, EDAD);
+CREAR TABLA pacientes (ID, ID_SALA NOMBRE, EDAD);
 ```
 ```sql
 USAR BASE datos;
